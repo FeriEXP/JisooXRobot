@@ -2,7 +2,7 @@ import html
 from telegram import Update, Bot, ParseMode
 from telegram.ext import run_async
 from JisooX.modules.disable import DisableAbleCommandHandler
-from Jisoox import dispatcher
+from JisooX import dispatcher
 from requests import get
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 
