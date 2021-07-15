@@ -38,15 +38,10 @@ def convert(bot: Bot, update: Update):
     else:
         update.effective_message.reply_text(__help__)
 
-__help__ = """
- - /cash : currency converter
- example syntax: /cash 1 USD INR
-"""
 
 CONVERTER_HANDLER = CommandHandler('cash', convert)
 
 dispatcher.add_handler(CONVERTER_HANDLER)
 
-__mod_name__ = "CURRENCY CONVERTER"
 __command_list__ = ["cash"]
 __handlers__ = [CONVERTER_HANDLER]
