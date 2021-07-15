@@ -232,6 +232,7 @@ __help__ = """
 - /stickerid: reply to a sticker to get its ID.
 - /getsticker: reply to a sticker to get the raw PNG image.
 - /steal: reply to a sticker or image to add it to your pack.
+- /q : create sticker quotly
 """
 
 __mod_name__ = "STICKERS"
