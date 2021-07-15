@@ -142,15 +142,6 @@ def __user_info__(user_id):
 
     return text
 
-__help__ = """
-/ignore : blacklist users
-/notice : 
-/ignoredlist : List of blacklisted users 
-"""
-
-__mod_name__ = "Ignore/Notice"
-
-
 
 BL_HANDLER = CommandHandler("ignore", bl_user, pass_args=True)
 UNBL_HANDLER = CommandHandler("notice", unbl_user, pass_args=True)
