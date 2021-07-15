@@ -30,7 +30,7 @@ def tts(bot: Bot, update: Update, args):
         linecount = len(linelist)
     if linecount == 1:
         update.message.chat.send_action(ChatAction.RECORD_AUDIO)
-        lang = "en"
+        lang = "id"
         tts = gTTS(reply, lang)
         tts.save("k.mp3")
     with open("k.mp3", "rb") as speech:
@@ -39,6 +39,6 @@ def tts(bot: Bot, update: Update, args):
 __help__ = """ Text to speech
 - /tts <your text>
 """
-__mod_name__ = "TEXT TO SPEECH"
+__mod_name__ = "TTS"
 
 dispatcher.add_handler(CommandHandler('tts', tts, pass_args=True))
