@@ -121,6 +121,7 @@ __help__ = """
  - /info: get information about a user.
  - /gifid: Get gif ID.
  - /markdownhelp: quick summary of how markdown works in telegram - can only be called in private chats.
+ - /cash : currency converter
 """
 
 ID_HANDLER = DisableAbleCommandHandler("id", get_id, pass_args=True)
