@@ -3,7 +3,7 @@ future
 emoji
 beautifulsoup4
 telegraph
-requests==2.20.0
+requests
 sqlalchemy==1.3.20
 tswift
 coffeehouse
