@@ -10,6 +10,7 @@ coffeehouse
 python-telegram-bot==11.1.0
 numpy
 urbandict
+nekos.py
 pyowm
 wikipedia
 kbbi
