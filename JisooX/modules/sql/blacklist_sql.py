@@ -2,7 +2,7 @@ import threading
 
 from sqlalchemy import func, distinct, Column, String, UnicodeText
 
-from cinderella.modules.sql import SESSION, BASE
+from JisooX.modules.sql import SESSION, BASE
 
 
 class BlackListFilters(BASE):
