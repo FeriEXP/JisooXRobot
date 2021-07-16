@@ -56,3 +56,6 @@ heroku3
 Pyrogram
 envparse
 TgCrypto
+search_engine_parser
+bing_image_downloader
+html2text
