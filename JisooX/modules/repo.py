@@ -1,13 +1,12 @@
 from pyrogram import filters
 from JisooX import pbot as app
-from JisooX.utils.http import get
-
+from requests import get
 
 @app.on_message(filters.command("repos") & ~filters.edited)
 async def repo(_, message):
     users = await get(
         "https://api.github.com/repos/ferikunn/JisooXRobot/contributors"
-    )
+    ).json()
     list_of_users = ""
     count = 1
     for user in users:
@@ -30,4 +29,4 @@ __help__ = """
  ❍ /repos*:* To Get My Github Repository Link And Support Group Link
 """
 
-__mod_name__ = "Repo"
+__mod_name__ = "REPO"
