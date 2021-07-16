@@ -3,7 +3,7 @@ from JisooX import pbot as app
 from requests import get
 
 @app.on_message(filters.command("repos") & ~filters.edited)
-async def repo(_, message):
+async def repos(_, message):
     users = await get(
         "https://api.github.com/repos/ferikunn/JisooXRobot/contributors"
     ).json()
