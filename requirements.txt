@@ -55,3 +55,4 @@ opencv-python-headless
 heroku3
 Pyrogram
 envparse
+TgCrypto
