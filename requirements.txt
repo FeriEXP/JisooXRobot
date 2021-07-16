@@ -57,3 +57,4 @@ Pyrogram
 envparse
 TgCrypto
 search_engine_parser
+html2text
