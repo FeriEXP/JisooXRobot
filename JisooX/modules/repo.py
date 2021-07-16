@@ -12,11 +12,11 @@ async def give_repo(c, m):
     for i in repo.get_contributors():
         count += 1
         list_of_users += f"*{count}.* [{i.login}](https://github.com/{i.login})\n"
-    text = f"[Github](https://github.com/ferikunn/JisooXRobot) | [Group](https://t.me/JisooSupport)
+    text = f"""[Github](https://github.com/ferikunn/JisooXRobot) | [Group](https://t.me/JisooSupport)
 ```----------------
 | Contributors |
 ----------------```
-{list_of_users}"
+{list_of_users}"""
     await m.reply(text, disable_web_page_preview=False)
 
 
