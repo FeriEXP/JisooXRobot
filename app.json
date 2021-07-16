@@ -31,6 +31,11 @@
         "description": "Enter the Heroku app name here (Must an exact same name with your input above).",
         "value": ""
       },
+      "REM_BG_API_KEY": {
+         "description": "Enter the Remove Background Api key.",
+         "required": false,
+         "value": ""
+      },
       "BAN_STICKER": {
          "description": "ID of the sticker you want to use when banning people.",
          "required": false,
