@@ -53,3 +53,4 @@ fontTools
 glitch_this
 opencv-python-headless
 heroku3
+Pyrogram
