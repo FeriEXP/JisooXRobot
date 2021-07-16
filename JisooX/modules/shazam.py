@@ -7,7 +7,7 @@ import requests
 from pyrogram import filters
 
 from JisooX.more.pluginhelpers import admins_only, edit_or_reply, fetch_audio
-from JisooX.pyrogram.pyrogram import pbot
+from JisooX.pyrogramee.pyrogram import pbot
 
 
 @pbot.on_message(filters.command(["identify", "shazam"]))
