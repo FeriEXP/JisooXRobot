@@ -6,8 +6,8 @@ from pyrogram import Client
 from JisooX.conf import get_int_key, get_str_key
 
 TOKEN = get_str_key("TOKEN", required=True)
-APP_ID = get_int_key("TELETHON_ID", required=True)
-APP_HASH = get_str_key("TELETHON_HASH", required=True)
+APP_ID = get_int_key("APP_ID", required=True)
+APP_HASH = get_str_key("APP_HASH", required=True)
 session_name = TOKEN.split(":")[0]
 pbot = Client(
     session_name,
