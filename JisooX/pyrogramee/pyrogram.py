@@ -11,8 +11,8 @@ APP_HASH = get_str_key("APP_HASH", required=True)
 session_name = TOKEN.split(":")[0]
 pbot = Client(
     session_name,
-    api_id=TELETHON_ID,
-    api_hash=TELETHON_HASH,
+    api_id=APP_ID,
+    api_hash=APP_HASH,
     bot_token=TOKEN,
 )
 
