@@ -152,3 +152,12 @@ async def _(event):
 
     required_string = "Successfully Kicked **{}** users"
     await event.reply(required_string.format(c))
+
+
+__help__ = """
+*Admins only:*
+ ❍ /zombies : To search for deleted accounts in a group.
+ ❍ /zombies clean: To delete all deleted accounts in the.
+"""
+
+__mod_name__ = "ZOMBIES"
