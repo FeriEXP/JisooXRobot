@@ -29,6 +29,7 @@ nltk
 psutil
 bleach
 aiohttp>=2.2.5
+aiofiles
 Pillow>=4.2.0
 CurrencyConverter
 #translator
