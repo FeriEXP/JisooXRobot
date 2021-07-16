@@ -3,7 +3,7 @@ from JisooX import pbot as app
 from JisooX.utils.http import get
 
 
-@app.on_message(filters.command("repo") & ~filters.edited)
+@app.on_message(filters.command("repos") & ~filters.edited)
 async def repo(_, message):
     users = await get(
         "https://api.github.com/repos/ferikunn/JisooXRobot/contributors"
@@ -16,7 +16,7 @@ async def repo(_, message):
         )
         count += 1
 
-    text = f"""[Github](https://github.com/ferikunn/JisooXRobot) | [Group](https://t.me/AnosSupport)
+    text = f"""[Github](https://github.com/ferikunn/JisooXRobot) | [Group](https://t.me/JisooSupport)
 ```----------------
 | Contributors |
 ----------------```
@@ -27,7 +27,7 @@ async def repo(_, message):
 
 
 __help__ = """
- ❍ /repo*:* To Get My Github Repository Link And Support Group Link
+ ❍ /repos*:* To Get My Github Repository Link And Support Group Link
 """
 
 __mod_name__ = "Repo"
