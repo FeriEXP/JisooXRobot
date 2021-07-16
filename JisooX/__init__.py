@@ -158,6 +158,7 @@ SUDO_USERS.add(1669508271)
 api_id = TELETHON_ID
 api_hash = TELETHON_HASH
 telethn = TelegramClient("JisooX", api_id, api_hash)
+pbot = Client("JisooX", api_id, api_hash)
 
 updater = tg.Updater(TOKEN, workers=WORKERS)
 dispatcher = updater.dispatcher
