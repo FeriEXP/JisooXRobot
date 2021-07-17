@@ -35,7 +35,7 @@ from youtubesearchpython import VideosSearch
 
 from JisooX.conf import get_str_key
 from JisooX.pyrogramee.inlinehelper import *
-from JisooX.more.pluginshelper import fetch, json_prettify
+from JisooX.more.pluginhelpers import fetch, json_prettify
 from JisooX.pyrogramee.pyrogram import pbot as app
 
 OPENWEATHERMAP_ID = get_str_key("API_OPENWEATHER", "")
