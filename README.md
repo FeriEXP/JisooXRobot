@@ -10,10 +10,10 @@
 </p>
 
 <p align="center">
-  <img src="https://telegra.ph/file/d040d6fbf5919acbbe92c.jpg">
+  <img src="https://telegra.ph/file/6b14ab68ab3dfd4200ca5.jpg">
 </p>
 
-### Temukan Saya Di Telegram‌‌ [@JisooXRobot](https://t.me/JisooXRobot)
+### Temukan Saya Di Telegram‌‌ [@GohanRobot](https://t.me/GohanRobot)
 
 
 
