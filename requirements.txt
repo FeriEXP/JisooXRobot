@@ -61,3 +61,5 @@ search_engine_parser
 bing_image_downloader
 html2text
 pygithub
+pykeyboard
+PyDictionary==2.0.1
