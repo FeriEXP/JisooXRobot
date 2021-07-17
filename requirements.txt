@@ -1,6 +1,7 @@
 Telethon==1.16.4
 future
 emoji
+countryinfo
 beautifulsoup4
 telegraph
 requests
