@@ -5,6 +5,7 @@ countryinfo
 beautifulsoup4
 telegraph
 requests
+faker
 sqlalchemy==1.3.23
 tswift
 coffeehouse
