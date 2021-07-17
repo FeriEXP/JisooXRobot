@@ -36,6 +36,14 @@
          "required": false,
          "value": ""
       },
+      "BOT_USERNAME": {
+         "description": "Enter You bot username.",
+         "value": ""
+      },
+      "ARQ_API_KEY": {
+         "description": "Enter You arq api key.",
+         "value": ""
+      },
       "BAN_STICKER": {
          "description": "ID of the sticker you want to use when banning people.",
          "required": false,
