@@ -22,7 +22,7 @@
 <p align="center"><a href="https://heroku.com/deploy?template=https://github.com/ferikunn/JisooXRobot">
   <img src="https://img.shields.io/badge/Deploy%20To%20Heroku-aqua?style=flat&logo=heroku" width="325" height="50.100" /></a></p>
 
-## Group Support 🛠
+## Group Support:
 
    <a href="https://t.me/JisooSupport"><img src="https://img.shields.io/badge/Group%20Support%3F-yes-green?&style=flat-square?&logo=telegram" width=220px></a></p>
 
