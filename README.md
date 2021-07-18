@@ -22,7 +22,9 @@
 <p align="center"><a href="https://heroku.com/deploy?template=https://github.com/Good-Boys-Exe/GohanXRobot">
   <img src="https://img.shields.io/badge/Deploy%20Ke%20Heroku-aqua?style=flat&logo=heroku" width="325" height="50.100" /></a></p>
 
-## Group Support:
-
-   <a href="https://t.me/GroupMusicRandom"><img src="https://img.shields.io/badge/Group%20Support%3F-yes-green?&style=flat-square?&logo=telegram" width=220px></a></p>
-
+## TELEGRAM
+Jika ada pertanyaan silahkan hubungi kami di grup atau di PM owner
+<p>
+    <a href="https://t.me/GB_03101999" target="blank"><img src="https://img.shields.io/badge/OWNER-ɢᴏᴏᴅ ʙᴏʏs-red?style=plastic&logo=telegram"width="250" height="52"/></a>
+    <a href="https://t.me/GroupMusicRandom" target="blank"><img src="https://img.shields.io/badge/JOIN GROUP-MUSIC-red?style=plastic&logo=telegram"width="250" height="52"/></a>
+</p>
