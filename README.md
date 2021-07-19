@@ -1,12 +1,12 @@
 <p align="center">
-    <a href="https://github.com/feriexp/JisooXRobot/stargazers"><img src="https://img.shields.io/github/stars/noob-kittu/YoneRobot?label=Stars&style=plastic&logo=github&color=F10070" alt="Stars"width="140" height="30" /></a>
+    <a href="https://github.com/feriexp/JisooXRobot/stargazers"><img src="https://img.shields.io/github/stars/noob-kittu/YoneRobot?label=STARS&style=plastic&logo=github&color=F10070" alt="Stars"width="140" height="30" /></a>
 </p>
 <p align="center">
-    <a href="https://github.com/feriexp/JisooXRobot"> <img src="https://img.shields.io/github/repo-size/noob-kittu/YoneRobot?color=orange&logo=github&logoColor=green&style=plastic"width="200" height="35" /></a>
-    <a href="https://github.com/feriexp/JisooXRobot/commits"> <img src="https://img.shields.io/github/last-commit/noob-kittu/YoneRobot?color=blue&logo=github&logoColor=green&style=plastic"width="200" height="30" /></a>
-    <a href="https://github.com/feriexp/JisooXRobot/issues"> <img src="https://img.shields.io/github/issues/noob-kittu/YoneRobot?color=blueviolet&logo=github&logoColor=green&style=plastic"width="190" height="30" /></a>
-    <a href="https://github.com/feriexp/JisooXRobot/network/members"> <img src="https://img.shields.io/github/forks/noob-kittu/YoneRobot?color=red&logo=github&logoColor=green&style=plastic"width="160" height="30" /></a>  
-    <a href="https://pypi.org/project/Telethon/"> <img src="https://img.shields.io/pypi/v/telethon?color=yellow&label=telethon&logo=python&logoColor=green&style=plastic"width="150" height="30" /></a>
+    <a href="https://github.com/feriexp/JisooXRobot"> <img src="https://img.shields.io/github/repo-size/noob-kittu/YoneRobot?color=orange&label=REPO-SIZE&logo=github&logoColor=green&style=plastic"width="200" height="35" /></a>
+    <a href="https://github.com/feriexp/JisooXRobot/commits"> <img src="https://img.shields.io/github/last-commit/noob-kittu/YoneRobot?color=blue&label=LAST-COMMIT&logo=github&logoColor=green&style=plastic"width="200" height="30" /></a>
+    <a href="https://github.com/feriexp/JisooXRobot/issues"> <img src="https://img.shields.io/github/issues/noob-kittu/YoneRobot?color=blueviolet&logo=github&label=ISSUE&logoColor=green&style=plastic"width="190" height="30" /></a>
+    <a href="https://github.com/feriexp/JisooXRobot/network/members"> <img src="https://img.shields.io/github/forks/noob-kittu/YoneRobot?color=red&label=FORK&logo=github&logoColor=green&style=plastic"width="160" height="30" /></a>  
+    <a href="https://pypi.org/project/Telethon/"> <img src="https://img.shields.io/pypi/v/telethon?color=yellow&label=TELETHON&logo=python&logoColor=green&style=plastic"width="150" height="30" /></a>
 </p>
 
 <p align="center">
