@@ -25,3 +25,6 @@
 ## Group Support:
 
    <a href="https://t.me/JisooSupport"><img src="https://img.shields.io/badge/Group%20Support%3F-yes-green?&style=flat-square?&logo=telegram" width=220px></a></p>
+
+# Credit : ~ [Cinderella](https://github.com/Sur-vivor/CinderellaProBot)
+           ~ [DaisyX](https://github.com/TeamDaisyX/DaisyX)           
