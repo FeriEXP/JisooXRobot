@@ -68,7 +68,7 @@ if ENV:
     HEROKU_API_KEY = os.environ.get("HEROKU_API_KEY", None)
     HEROKU_APP_NAME = os.environ.get("HEROKU_APP_NAME", None)
     ARQ_API_URL = "https://thearq.tech"
-    ARQ_API_KEY = os.environ.get("ARQ_API_KEY", None)
+    ARQ_API_KEY = "RQNZTH-KBDAOB-IUGDLG-VNDIFP-ARQ"
     BOT_USERNAME = os.environ.get("BOT_USERNAME", None)
     TEMP_DOWNLOAD_DIRECTORY = os.environ.get("TEMP_DOWNLOAD_DIRECTORY", "./")
     DONATION_LINK = os.environ.get('DONATION_LINK')
@@ -168,8 +168,11 @@ SUDO_USERS.add(1738637033)
 # Telethon
 api_id = TELETHON_ID
 api_hash = TELETHON_HASH
+print("[JisooXRobot]: TELETHON CLIENT STARTING")
 telethn = TelegramClient("JisooX", api_id, api_hash)
+print("[INFO]: INITIALZING AIOHTTP SESSION")
 aiohttpsession = ClientSession()
+print("[INFO]: INITIALIZING ARQ CLIENT")
 arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
 pbot = Client("JisooX", api_id, api_hash)
 
