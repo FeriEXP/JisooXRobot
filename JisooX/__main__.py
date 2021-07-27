@@ -179,8 +179,8 @@ def send_start(bot, update):
     first_name = update.effective_user.first_name 
     text = PM_START_TEXT
 
-    keyboard = [[InlineKeyboardButton(text="🤝Help",callback_data="help_back"),InlineKeyboardButton(text="🛡Creator🛡",url="https://t.me/xflicks")]]
-    keyboard += [[InlineKeyboardButton(text="[► Anos ◄]", callback_data="https://t.me/anosvoldigoadbot"),InlineKeyboardButton(text="⚜️Add Me⚜️",url="t.me/{}?startgroup=true".format(bot.username))]]
+    keyboard = [[InlineKeyboardButton(text="[► Help ◄]",callback_data="help_back"),InlineKeyboardButton(text="[► Creator ◄]",url="https://t.me/xflicks")]]
+    keyboard += [[InlineKeyboardButton(text="[► Anos ◄]", callback_data="t.me/AnosVoldigoadBot"),InlineKeyboardButton(text="[► Add Me ◄]",url="t.me/{}?startgroup=true".format(bot.username))]]
 
     update.effective_message.reply_photo(img, PM_START_TEXT.format(escape_markdown(first_name), escape_markdown(bot.first_name), OWNER_NAME, OWNER_ID), 
                                          reply_markup=InlineKeyboardMarkup(keyboard), disable_web_page_preview=True, parse_mode=ParseMode.MARKDOWN)
