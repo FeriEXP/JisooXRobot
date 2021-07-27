@@ -10,7 +10,7 @@ from telethon import TelegramClient
 from aiohttp import ClientSession
 from Python_ARQ import ARQ
 
-VERSION = "6.0"
+VERSION = "7.0"
 # enable logging
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
