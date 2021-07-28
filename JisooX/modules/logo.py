@@ -16,7 +16,7 @@ async def lego(event):
       xnxx = await event.reply('Provide Some Text To Draw!')
       
     try:
-    await event.reply('Creating your logo...wait!')
+    await xnxx.reply('Creating your logo...wait!')
     img = Image.open('./JisooX/resources/951b8baf6839dccee3bbd7ab16b23813.jpg')
     draw = ImageDraw.Draw(img)
     image_widthz, image_heightz = img.size
