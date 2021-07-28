@@ -1,22 +1,18 @@
 import os
 from JisooX.events import register
-from JisooX import OWNER_ID
 from JisooX import telethn as tbot
 from PIL import Image, ImageDraw, ImageFont
 
 
 @register(pattern="^/logo ?(.*)")
 async def lego(event):
- xnxx = event.pattern_match.group(1)
- if event.sender_id == OWNER_ID:
-     pass
- else:
-     
-    if not xnxx:
-      xnxx = await event.reply('Provide Some Text To Draw!')
-      
-    try:
-    await xnxx.reply('Creating your logo...wait!')
+ quew = event.pattern_match.group(1)
+ if not quew:
+        await event.reply("Provide Some Text To Draw!")
+        return 
+ try:
+    await event.reply('Creating your logo...wait!')
+    await event.delete()
     img = Image.open('./JisooX/resources/951b8baf6839dccee3bbd7ab16b23813.jpg')
     draw = ImageDraw.Draw(img)
     image_widthz, image_heightz = img.size
@@ -37,7 +33,7 @@ async def lego(event):
     if os.path.exists(fname2):
             os.remove(fname2)
  except Exception as e:
-   await event.reply(f'Error Report @Rorflame, {e}')
+   await event.reply(f'Error Report @xflicks, {e}')
 
 
 file_help = os.path.basename(__file__)
