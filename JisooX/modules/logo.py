@@ -11,8 +11,8 @@ async def lego(event):
         await event.reply("Provide Some Text To Draw!")
         return 
  try:
-    await event.reply('Creating your logo...wait!')
-    await event.delete()
+    memek = await event.reply('Creating your logo...wait!')
+    await memek.delete()
     text = event.pattern_match.group(1)
     img = Image.open('./JisooX/resources/951b8baf6839dccee3bbd7ab16b23813.jpg')
     draw = ImageDraw.Draw(img)
@@ -30,7 +30,7 @@ async def lego(event):
     draw.text((x, y), text, font=font, fill="black", stroke_width=25, stroke_fill="yellow")
     fname2 = "Jisoo.png"
     img.save(fname2, "png")
-    await tbot.send_file(event.chat_id, fname2, caption="Made By Zenwisteria")
+    await tbot.send_file(event.chat_id, fname2, caption="Made By @JisooXRobot")
     if os.path.exists(fname2):
             os.remove(fname2)
  except Exception as e:
