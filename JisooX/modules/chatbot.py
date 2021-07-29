@@ -18,9 +18,9 @@ import aiohttp
 from googletrans import Translator as google_translator
 from pyrogram import filters
 from JisooX import BOT_ID
-from JisooX.helper_extra.aichat import add_chat, get_session, remove_chat
+from JisooX.more.aichat import add_chat, get_session, remove_chat
 from JisooX import arq
-from JisooX.pyrogramee.pluginshelper import admins_only, edit_or_reply
+from JisooX.more.pluginshelper import admins_only, edit_or_reply
 from JisooX import pbot as Feri
 
 url = "https://acobot-brainshop-ai-v1.p.rapidapi.com/get"
