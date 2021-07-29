@@ -23,6 +23,16 @@
          "value": "",
          "required": true
       },
+      "BOT_ID": {
+         "description": "Your bot ID.. Use any other bot to get it.",
+         "required": true,
+         "value": ""
+      },
+      "MONGO_DB_URI": {
+         "description": "Required for database connections.",
+         "required": false,
+         "value": ""
+      },
       "HEROKU_API_KEY": {
         "description": "Your Heroku API key, get it from 'https://dashboard.heroku.com/account'",
         "value": ""
