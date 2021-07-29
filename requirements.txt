@@ -66,4 +66,6 @@ html2text
 pygithub
 pykeyboard
 PyDictionary==2.0.1
+pymongo
 motor
+dnspython
