@@ -65,7 +65,7 @@ if ENV:
     CERT_PATH = os.environ.get("CERT_PATH")
 
     DB_URI = os.environ.get('DATABASE_URL')
-    MONGO_DB_URI = Config.MONGO_DB_URI
+    MONGO_DB_URI = os.environ.get("MONGO_DB_URI", None)
     BOT_ID = int(os.environ.get("BOT_ID", None))
     HEROKU_API_KEY = os.environ.get("HEROKU_API_KEY", None)
     HEROKU_APP_NAME = os.environ.get("HEROKU_APP_NAME", None)
