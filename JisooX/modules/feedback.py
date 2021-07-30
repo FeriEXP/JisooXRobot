@@ -4,7 +4,7 @@ from telegram.ext import run_async
 from JisooX.modules.disable import DisableAbleCommandHandler
 from JisooX import dispatcher
 from requests import get
-from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 
 
 

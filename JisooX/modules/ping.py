@@ -10,8 +10,6 @@ import requests
 from telegram import Message, Chat, Update, Bot, MessageEntity
 from telegram import ParseMode
 from telegram.ext import CommandHandler, run_async, Filters
-from telegram import Update, Bot
-from telegram.ext import run_async
 
 from JisooX.modules.disable import DisableAbleCommandHandler
 from JisooX import dispatcher, StartTime
