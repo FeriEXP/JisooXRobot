@@ -13,7 +13,6 @@
 
 import re
 import emoji
-import re
 import aiohttp
 from googletrans import Translator as google_translator
 from pyrogram import filters

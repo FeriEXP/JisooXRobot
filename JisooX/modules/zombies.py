@@ -113,10 +113,9 @@ async def zombies(event):
     await cleaning_zombies.edit(del_status)
     
     
-from telethon.tl.types import UserStatusLastMonth, UserStatusLastWeek, ChatBannedRights
+from telethon.tl.types import UserStatusLastMonth, UserStatusLastWeek
 from JisooX.events import register
 from telethon import *
-from telethon.tl.functions.channels import (EditBannedRequest)
                                             
 
 @register(pattern="^/kickthefools")

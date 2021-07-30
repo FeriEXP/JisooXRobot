@@ -13,16 +13,12 @@ from JisooX.modules.disable import DisableAbleCommandHandler
 from JisooX.modules.helper_funcs.chat_status import bot_admin, can_promote, user_admin, can_pin, dev_plus
 
 from requests import get
-
-# Common imports for eval
-import sys
 import inspect
 import os
 import shutil
 import glob
 import math
 import textwrap
-import os
 import requests
 import json
 import gc
