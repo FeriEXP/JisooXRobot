@@ -369,7 +369,7 @@ def set_title(bot: Bot, update: Update, args: List[str]):
     result = requests.post(f"https://api.telegram.org/bot{TOKEN}/setChatAdministratorCustomTitle?chat_id={chat.id}&user_id={user_id}&custom_title={title}")
     status = result.json()["ok"]
 
-    if status == True:
+    if status is True:
         bot.sendMessage(chat.id, "Sucessfully set title for <code>{}</code> to <code>{}</code>!".format(user_member.user.first_name or user_id, title[:16]), parse_mode=ParseMode.HTML)
     else:
         description = result.json()["description"]
@@ -489,7 +489,7 @@ def setchatpic(bot: Bot, update: Update):
     user = update.effective_user
 
     user_member = chat.get_member(user.id)
-    if user_member.can_change_info == False:
+    if user_member.can_change_info is False:
        msg.reply_text("You are missing right to change group info!")
        return
 
@@ -527,7 +527,7 @@ def rmchatpic(bot: Bot, update: Update):
     user = update.effective_user
 
     user_member = chat.get_member(user.id)
-    if user_member.can_change_info == False:
+    if user_member.can_change_info is False:
        msg.reply_text("You don't have enough rights to delete group photo")
        return
     try:

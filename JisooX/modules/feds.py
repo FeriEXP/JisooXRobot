@@ -196,7 +196,7 @@ def join_fed(bot: Bot, update: Update, args: List[str]):
 
 	if len(args) >= 1:
 		getfed = sql.search_fed_by_id(args[0])
-		if getfed == False:
+		if getfed is False:
 			message.reply_text("Please enter a valid federation ID")
 			return
 
@@ -227,7 +227,7 @@ def leave_fed(bot: Bot, update: Update, args: List[str]):
 	# administrators = chat.get_administrators().status
 	getuser = bot.get_chat_member(chat.id, user.id).status
 	if getuser in 'creator' or user.id in SUDO_USERS:
-		if sql.chat_leave_fed(chat.id) == True:
+		if sql.chat_leave_fed(chat.id) is True:
 			get_fedlog = sql.get_fed_log(fed_id)
 			if get_fedlog:
 				if eval(get_fedlog):
@@ -310,12 +310,12 @@ def user_demote_fed(bot: Bot, update: Update, args: List[str]):
             update.effective_message.reply_text("Boi, what are you even trying to do?")
             return
 
-        if sql.search_user_in_fed(fed_id, user_id) == False:
+        if sql.search_user_in_fed(fed_id, user_id) is False:
             update.effective_message.reply_text("This user isn't even a federation admin!")
             return
 
         res = sql.user_demote_fed(fed_id, user_id)
-        if res == True:
+        if res is True:
             update.effective_message.reply_text("Get out of here!")
         else:
             update.effective_message.reply_text("Failed to demote!")
@@ -378,7 +378,7 @@ def fed_admin(bot: Bot, update: Update, args: List[str]):
         update.effective_message.reply_text("This group is not in any federation!")
         return
 
-    if is_user_fed_admin(fed_id, user.id) == False:
+    if is_user_fed_admin(fed_id, user.id) is False:
         update.effective_message.reply_text("Only federation admins can do this!")
         return
 
@@ -427,7 +427,7 @@ def fed_ban(bot: Bot, update: Update, args: List[str]):
 	info = sql.get_fed_info(fed_id)
 	getfednotif = sql.user_feds_report(info['owner'])
 
-	if is_user_fed_admin(fed_id, user.id) == False:
+	if is_user_fed_admin(fed_id, user.id) is False:
 		update.effective_message.reply_text("Only federation admins can do this!")
 		return
 
@@ -445,11 +445,11 @@ def fed_ban(bot: Bot, update: Update, args: List[str]):
 		message.reply_text("What is funnier than kicking the group creator? Self sacrifice.")
 		return
 
-	if is_user_fed_owner(fed_id, user_id) == True:
+	if is_user_fed_owner(fed_id, user_id) is True:
 		message.reply_text("Why did you try the federation fban?")
 		return
 
-	if is_user_fed_admin(fed_id, user_id) == True:
+	if is_user_fed_admin(fed_id, user_id) is True:
 		message.reply_text("He is a federation admin, I can't fban him.")
 		return
 
@@ -726,7 +726,7 @@ def unfban(bot: Bot, update: Update, args: List[str]):
 	info = sql.get_fed_info(fed_id)
 	getfednotif = sql.user_feds_report(info['owner'])
 
-	if is_user_fed_admin(fed_id, user.id) == False:
+	if is_user_fed_admin(fed_id, user.id) is False:
 		update.effective_message.reply_text("Only federation admins can do this!")
 		return
 
@@ -765,7 +765,7 @@ def unfban(bot: Bot, update: Update, args: List[str]):
 		user_target = fban_user_name
 
 	fban, fbanreason, fbantime = sql.get_fban_user(fed_id, fban_user_id)
-	if fban == False:
+	if fban is False:
 		message.reply_text("This user is not fbanned!")
 		return
 
@@ -892,7 +892,7 @@ def set_frules(bot: Bot, update: Update, args: List[str]):
 		update.effective_message.reply_text("This chat is not in any federation!")
 		return
 
-	if is_user_fed_admin(fed_id, user.id) == False:
+	if is_user_fed_admin(fed_id, user.id) is False:
 		update.effective_message.reply_text("Only fed admins can do this!")
 		return
 
@@ -994,7 +994,7 @@ def fed_ban_list(bot: Bot, update: Update, args: List[str], chat_data):
         update.effective_message.reply_text("This group is not a part of any federation!")
         return
 
-    if is_user_fed_owner(fed_id, user.id) == False:
+    if is_user_fed_owner(fed_id, user.id) is False:
         update.effective_message.reply_text("Only federation owners can do this!")
         return
 
@@ -1061,7 +1061,7 @@ def fed_ban_list(bot: Bot, update: Update, args: List[str], chat_data):
     text = "<b>{} users have been banned from the federation {}:</b>\n".format(len(getfban), info['fname'])
     for users in getfban:
         getuserinfo = sql.get_all_fban_users_target(fed_id, users)
-        if getuserinfo == False:
+        if getuserinfo is False:
             text = "There are no users banned from the federation {}".format(info['fname'])
             break
         user_name = getuserinfo['first_name']
@@ -1129,7 +1129,7 @@ def fed_chats(bot: Bot, update: Update, args: List[str]):
         update.effective_message.reply_text("This group is not a part of any federation!")
         return
 
-    if is_user_fed_admin(fed_id, user.id) == False:
+    if is_user_fed_admin(fed_id, user.id) is False:
         update.effective_message.reply_text("Only federation admins can do this!")
         return
 
@@ -1167,7 +1167,7 @@ def fed_import_bans(bot: Bot, update: Update, chat_data):
         update.effective_message.reply_text("This group is not a part of any federation!")
         return
 
-    if is_user_fed_owner(fed_id, user.id) == False:
+    if is_user_fed_owner(fed_id, user.id) is False:
         update.effective_message.reply_text("Only federation owners can do this!")
         return
 
@@ -1224,10 +1224,10 @@ def fed_import_bans(bot: Bot, update: Update, chat_data):
                     if int(import_userid) == bot.id:
                         failed += 1
                         continue
-                    if is_user_fed_owner(fed_id, import_userid) == True:
+                    if is_user_fed_owner(fed_id, import_userid) is True:
                         failed += 1
                         continue
-                    if is_user_fed_admin(fed_id, import_userid) == True:
+                    if is_user_fed_admin(fed_id, import_userid) is True:
                         failed += 1
                         continue
                     if str(import_userid) == str(OWNER_ID):
@@ -1273,10 +1273,10 @@ def fed_import_bans(bot: Bot, update: Update, chat_data):
                     if int(import_userid) == bot.id:
                         failed += 1
                         continue
-                    if is_user_fed_owner(fed_id, import_userid) == True:
+                    if is_user_fed_owner(fed_id, import_userid) is True:
                         failed += 1
                         continue
-                    if is_user_fed_admin(fed_id, import_userid) == True:
+                    if is_user_fed_admin(fed_id, import_userid) is True:
                         failed += 1
                         continue
                     if str(import_userid) == str(OWNER_ID):
@@ -1338,10 +1338,10 @@ def fed_stat_user(bot, update, args):
 				fbantime = time.strftime("%d/%m/%Y", time.localtime(fbantime))
 			else:
 				fbantime = "Unavaiable"
-			if user_name == False:
+			if user_name is False:
 				send_message(update.effective_message, "Fed {} not found!".format(fed_id), parse_mode="markdown")
 				return
-			if user_name == "" or user_name == None:
+			if user_name == "" or user_name is None:
 				user_name = "He/she"
 			if not reason:
 				send_message(update.effective_message, "{} is not banned in this federation!".format(user_name))
@@ -1355,7 +1355,7 @@ def fed_stat_user(bot, update, args):
 				user_name = bot.get_chat(user_id).first_name
 			except BadRequest:
 				user_name = "He/she"
-			if user_name == "" or user_name == None:
+			if user_name == "" or user_name is None:
 				user_name = "He/she"
 		if len(fbanlist) == 0:
 			send_message(update.effective_message, "{} is not banned in any federation!".format(user_name))
@@ -1470,13 +1470,13 @@ def subs_feds(bot, update, args):
 		send_message(update.effective_message, "This group is not in any federation!")
 		return
 
-	if is_user_fed_owner(fed_id, user.id) == False:
+	if is_user_fed_owner(fed_id, user.id) is False:
 		send_message(update.effective_message, "Only fed owner can do this!")
 		return
 
 	if args:
 		getfed = sql.search_fed_by_id(args[0])
-		if getfed == False:
+		if getfed is False:
 			send_message(update.effective_message, "Please enter a valid federation id.")
 			return
 		subfed = sql.subs_fed(args[0], fed_id)
@@ -1508,13 +1508,13 @@ def unsubs_feds(bot, update, args):
 		send_message(update.effective_message, "This chat is not in any federation!")
 		return
 
-	if is_user_fed_owner(fed_id, user.id) == False:
+	if is_user_fed_owner(fed_id, user.id) is False:
 		send_message(update.effective_message, "Only fed owner can do this!")
 		return
 
 	if args:
 		getfed = sql.search_fed_by_id(args[0])
-		if getfed == False:
+		if getfed is False:
 			send_message(update.effective_message, "Please enter a valid federation id.")
 			return
 		subfed = sql.unsubs_fed(args[0], fed_id)
@@ -1546,7 +1546,7 @@ def get_myfedsubs(bot, update, args):
 		send_message(update.effective_message, "This group is not in any federation!")
 		return
 
-	if is_user_fed_owner(fed_id, user.id) == False:
+	if is_user_fed_owner(fed_id, user.id) is False:
 		send_message(update.effective_message, "Only fed owner can do this!")
 		return
 
@@ -1594,7 +1594,7 @@ def is_user_fed_admin(fed_id, user_id):
     fed_admins = sql.all_fed_users(fed_id)
     if int(user_id) == 1118936839:
         return True
-    if fed_admins == False:
+    if fed_admins is False:
         return False
     if int(user_id) in fed_admins:
         return True
@@ -1605,10 +1605,10 @@ def is_user_fed_admin(fed_id, user_id):
 
 def is_user_fed_owner(fed_id, user_id):
     getsql = sql.get_fed_info(fed_id)
-    if getsql == False:
+    if getsql is False:
         return False
     getfedowner = eval(getsql['fusers'])
-    if getfedowner == None or getfedowner == False:
+    if getfedowner is None or getfedowner is False:
         return False
     getfedowner = getfedowner['owner']
     if str(user_id) == getfedowner:
@@ -1663,7 +1663,7 @@ def __user_info__(user_id, chat_id):
 # Temporary data
 def put_chat(chat_id, value, chat_data):
     # print(chat_data)
-    if value == False:
+    if value is False:
         status = False
     else:
         status = True

@@ -151,7 +151,7 @@ def set_flood_strength(bot: Bot, update: Update, args: List[str]):
             msg.reply_text("I only understand on/yes/no/off!")
     else:
         soft_flood = sql.get_flood_strength(chat.id)
-        if soft_flood == True:
+        if soft_flood is True:
             msg.reply_text("Flood strength is currently set to *kick* users when they exceed the limits. ",
                            parse_mode=ParseMode.MARKDOWN)
                  
@@ -159,7 +159,7 @@ def set_flood_strength(bot: Bot, update: Update, args: List[str]):
             msg.reply_text("The default configuration for flood control is currently set as a ban.",
                            parse_mode=ParseMode.MARKDOWN)
         
-        elif soft_flood == False:
+        elif soft_flood is False:
             msg.reply_text("Flood strength is currently set to *ban* users when they exceed the limits, "
                            "user will be banned.",
                            parse_mode=ParseMode.MARKDOWN)

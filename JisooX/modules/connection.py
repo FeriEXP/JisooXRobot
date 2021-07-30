@@ -53,7 +53,7 @@ def connection_chat(bot: Bot, update: Update):
     user = update.effective_user
 
     spam = spamfilters(update.effective_message.text, update.effective_message.from_user.id, update.effective_chat.id)
-    if spam == True:
+    if spam is True:
         return
     
     conn = connected(bot, update, chat, user.id, need_admin=True)
@@ -81,7 +81,7 @@ def connect_chat(bot: Bot, update: Update, args: List[str]):
     user = update.effective_user
 
     spam = spamfilters(update.effective_message.text, update.effective_message.from_user.id, update.effective_chat.id)
-    if spam == True:
+    if spam is True:
         return
 
     if update.effective_chat.type == 'private':
@@ -178,7 +178,7 @@ def connect_chat(bot: Bot, update: Update, args: List[str]):
 def disconnect_chat(bot: Bot, update: Update):
 
     spam = spamfilters(update.effective_message.text, update.effective_message.from_user.id, update.effective_chat.id)
-    if spam == True:
+    if spam is True:
         return
 
     if update.effective_chat.type == 'private':
@@ -196,7 +196,7 @@ def connected(bot, update, chat, user_id, need_admin=True):
     user = update.effective_user
     spam = spamfilters(update.effective_message.text, update.effective_message.from_user.id, update.effective_chat.id)
 
-    if spam == True:
+    if spam is True:
         return
         
     if chat.type == chat.PRIVATE and sql.get_connected_chat(user_id):
@@ -208,7 +208,7 @@ def connected(bot, update, chat, user_id, need_admin=True):
         isallow = sql.allow_connect_to_chat(conn_id)
 
         if (isadmin) or (isallow and ismember) or (user.id in SUDO_USERS) or (user.id in DEV_USERS):
-            if need_admin == True:
+            if need_admin is True:
                 if getstatusadmin.status in ('administrator', 'creator') or user_id in SUDO_USERS or user.id in DEV_USERS:
                     return conn_id
                 else:
@@ -228,7 +228,7 @@ def connected(bot, update, chat, user_id, need_admin=True):
 def help_connect_chat(bot: Bot, update: Update):
 
     spam = spamfilters(update.effective_message.text, update.effective_message.from_user.id, update.effective_chat.id)
-    if spam == True:
+    if spam is True:
         return
 
     if update.effective_message.chat.type != "private":
