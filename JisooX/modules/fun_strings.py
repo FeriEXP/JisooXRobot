@@ -88,7 +88,7 @@ SLAP_TEMPLATES = (
     "{user1} {hits} {user2} Dengan tangan kosong!.",
     "( ･_･)ﾉ⌒●~* (･.･;) <-{user2}",
     "( ・_・)ノΞ●~*  {user2},Shinaeeeee!!.",
-    "( う-´)づ︻╦̵̵̿╤── \(˚☐˚”)/ {user2}.",
+    r"( う-´)づ︻╦̵̵̿╤── \(˚☐˚”)/ {user2}.",
     "{user1} Mengecrottt {user2} Dengan laser bol...bbbbbb (ง・ω・)ง ====*",
     "{user1} ara ara's {user2}.",
     "{user1} ora ora's {user2}.",
