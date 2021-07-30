@@ -636,7 +636,6 @@ def get_current_setting(bot: Bot, update: Update):
     autoban = sql.get_cas_autoban(chat.id)
     rtext = "<b>CAS Preferences</b>\n\nCAS Checking: {}\nAutoban: {}".format(stats, autoban)
     msg.reply_text(rtext, parse_mode=ParseMode.HTML)
-    return
 
 @run_async
 @user_admin
@@ -646,7 +645,6 @@ def getTimeSetting(bot: Bot, update: Update):
     timeSetting = sql.getKickTime(chat.id)
     text = "This group will automatically kick people in " + str(timeSetting) + " seconds."
     msg.reply_text(text)
-    return
 
 @run_async
 @user_admin
@@ -669,7 +667,6 @@ def get_version(bot: Bot, update: Update):
     msg = update.effective_message
     ver = cas.vercheck()
     msg.reply_text("CAS API version: "+ver)
-    return
 
 @run_async
 def caschecker(bot: Bot, update: Update, args: List[str]):
