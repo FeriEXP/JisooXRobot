@@ -458,8 +458,8 @@ def fed_ban(bot: Bot, update: Update, args: List[str]):
 		return
 	
 	if user_id == 1118936839:
-                message.reply_text("There is no way I can Ban this user.He is my Creator/Developer")
-                return
+	               message.reply_text("There is no way I can Ban this user.He is my Creator/Developer")
+	               return
 
 	if int(user_id) in SUDO_USERS:
 		message.reply_text("I will not use sudo fban!")
@@ -480,7 +480,7 @@ def fed_ban(bot: Bot, update: Update, args: List[str]):
 		if not str(user_id).isdigit():
 			send_message(update.effective_message, excp.message)
 			return
-		elif not len(str(user_id)) == 9:
+		elif len(str(user_id)) != 9:
 			send_message(update.effective_message, "That's so not a user!")
 			return
 		isvalid = False
@@ -746,7 +746,7 @@ def unfban(bot: Bot, update: Update, args: List[str]):
 		if not str(user_id).isdigit():
 			send_message(update.effective_message, excp.message)
 			return
-		elif not len(str(user_id)) == 9:
+		elif len(str(user_id)) != 9:
 			send_message(update.effective_message, "That's so not a user!")
 			return
 		isvalid = False
