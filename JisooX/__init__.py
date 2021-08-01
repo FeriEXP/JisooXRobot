@@ -21,7 +21,7 @@ LOGGER = logging.getLogger(__name__)
 # if version < 3.6, stop bot.
 if sys.version_info[0] < 3 or sys.version_info[1] < 6:
     LOGGER.error("You MUST have a python version of at least 3.6! Multiple features depend on this. Bot quitting.")
-    sys.exit(1)
+    quit(1)
 
 ENV = bool(os.environ.get('ENV', False))
 
@@ -37,23 +37,23 @@ if ENV:
     OWNER_NAME = os.environ.get("OWNER_NAME", None)
 
     try:
-        SUDO_USERS = {int(x) for x in os.environ.get("SUDO_USERS", "").split()}
-        DEV_USERS = {int(x) for x in os.environ.get("DEV_USERS", "").split()}
+        SUDO_USERS = set(int(x) for x in os.environ.get("SUDO_USERS", "").split())
+        DEV_USERS = set(int(x) for x in os.environ.get("DEV_USERS", "").split())
     except ValueError:
         raise Exception("Your sudo or dev users list does not contain valid integers.")
 
     try:
-        SUPPORT_USERS = {int(x) for x in os.environ.get("SUPPORT_USERS", "").split()}
+        SUPPORT_USERS = set(int(x) for x in os.environ.get("SUPPORT_USERS", "").split())
     except ValueError:
         raise Exception("Your support users list does not contain valid integers.")
 
     try:
-        SPAMMERS = {int(x) for x in os.environ.get("SPAMMERS", "").split()}
+        SPAMMERS = set(int(x) for x in os.environ.get("SPAMMERS", "").split())
     except ValueError:
         raise Exception("Your spammers users list does not contain valid integers.")
 
     try:
-        WHITELIST_USERS = {int(x) for x in os.environ.get("WHITELIST_USERS", "").split()}
+        WHITELIST_USERS = set(int(x) for x in os.environ.get("WHITELIST_USERS", "").split())
     except ValueError:
         raise Exception("Your whitelisted users list does not contain valid integers.")
 
@@ -65,8 +65,6 @@ if ENV:
     CERT_PATH = os.environ.get("CERT_PATH")
 
     DB_URI = os.environ.get('DATABASE_URL')
-    MONGO_DB_URI = os.environ.get("MONGO_DB_URI", None)
-    BOT_ID = int(os.environ.get("BOT_ID", None))
     HEROKU_API_KEY = os.environ.get("HEROKU_API_KEY", None)
     HEROKU_APP_NAME = os.environ.get("HEROKU_APP_NAME", None)
     ARQ_API_URL = "https://thearq.tech"
@@ -106,23 +104,23 @@ else:
     OWNER_USERNAME = Config.OWNER_USERNAME
 
     try:
-        SUDO_USERS = {int(x) for x in Config.SUDO_USERS or []}
-        DEV_USERS = {int(x) for x in Config.DEV_USERS or []}
+        SUDO_USERS = set(int(x) for x in Config.SUDO_USERS or [])
+        DEV_USERS = set(int(x) for x in Config.DEV_USERS or [])
     except ValueError:
         raise Exception("Your sudo or dev users list does not contain valid integers.")
 
     try:
-        SUPPORT_USERS = {int(x) for x in Config.SUPPORT_USERS or []}
+        SUPPORT_USERS = set(int(x) for x in Config.SUPPORT_USERS or [])
     except ValueError:
         raise Exception("Your support users list does not contain valid integers.")
 
     try:
-        SPAMMERS = {int(x) for x in Config.SPAMMERS or []}
+        SPAMMERS = set(int(x) for x in Config.SPAMMERS or [])
     except ValueError:
         raise Exception("Your spammers users list does not contain valid integers.")
 
     try:
-        WHITELIST_USERS = {int(x) for x in Config.WHITELIST_USERS or []}
+        WHITELIST_USERS = set(int(x) for x in Config.WHITELIST_USERS or [])
     except ValueError:
         raise Exception("Your whitelisted users list does not contain valid integers.")
 
@@ -133,8 +131,6 @@ else:
     CERT_PATH = Config.CERT_PATH
 
     DB_URI = Config.SQLALCHEMY_DATABASE_URI
-    BOT_ID = Config.BOT_ID
-    MONGO_DB_URI = Config.MONGO_DB_URI
     HEROKU_API_KEY = Config.HEROKU_API_KEY
     HEROKU_APP_NAME = Config.HEROKU_APP_NAME
     ARQ_API = Config.ARQ_API_KEY
