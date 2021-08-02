@@ -6,7 +6,7 @@ from JisooX.events import register
 async def _(td):
     try:
         kuntul = requests.get("https://tede-api.herokuapp.com/api/truth").json()
-        results = f"{kuntul['message']}"
+        results = f"**{kuntul['message']}**"
         return await td.reply(results)
     except Exception:
         await td.reply("`Something went wrong LOL...`")
@@ -16,7 +16,7 @@ async def _(td):
 async def _(dr):
     try:
         kuntul = requests.get("https://tede-api.herokuapp.com/api/dare").json()
-        results = f"{kuntul['message']}"
+        results = f"**{kuntul['message']}**"
         return await dr.reply(results)
     except Exception:
         await dr.reply("`Something went wrong LOL...`")
