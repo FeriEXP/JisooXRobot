@@ -21,3 +21,13 @@ async def wibu(event):
         return await tbot.send_file(event.chat_id, wibunya)
     except Exception:
         await event.reply("`Something went wrong LOL...`")
+
+
+@register(pattern="^/chika ?(.*)")
+async def chika(event):
+    try:
+        resp = requests.get("https://tede-api.herokuapp.com/api/chika").json()
+        chikanya = f"{resp['url']}"
+        return await tbot.send_file(event.chat_id, chikanya)
+    except Exception:
+        await event.reply("`Something went wrong LOL...`")
