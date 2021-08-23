@@ -1,16 +1,10 @@
-
-
 import requests as r
 from random import randint
 from time import sleep
-
 from telegram import Message, Chat, Update, Bot
 from telegram.ext import run_async
-
 from JisooX import dispatcher,WALL_API
 from JisooX.modules.disable import DisableAbleCommandHandler
-
-
 
 
 @run_async
