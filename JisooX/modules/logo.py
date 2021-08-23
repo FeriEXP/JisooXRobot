@@ -35,7 +35,7 @@ async def lego(event):
             os.remove(fname2)
             await memek.delete()
  except Exception as e:
-   await event.reply(f'Error Report @xflicks, {e}')
+   await event.reply(f'Error Report @AnosSupport, {e}')
 
 
 file_help = os.path.basename(__file__)
