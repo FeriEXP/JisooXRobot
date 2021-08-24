@@ -30,11 +30,13 @@
       },
       "HEROKU_API_KEY": {
         "description": "Your Heroku API key, get it from 'https://dashboard.heroku.com/account'",
-        "value": ""
+        "required": true,
+         "value": ""
       },
       "HEROKU_APP_NAME": {
         "description": "Enter the Heroku app name here (Must an exact same name with your input above).",
-        "value": ""
+        "required": true,
+         "value": ""
       },
       "REM_BG_API_KEY": {
          "description": "Enter the Remove Background Api key.",
@@ -43,6 +45,7 @@
       },
       "BOT_USERNAME": {
          "description": "Enter You bot username.",
+         "required": true,
          "value": ""
       },
       "BAN_STICKER": {
@@ -138,7 +141,6 @@
          "required": false,
          "value": "1669508271 1841175154"
       },
-     
       "TOKEN": {
          "description": "Your bot token.",
          "required": true,
