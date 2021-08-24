@@ -1,10 +1,7 @@
-  
 from telegram import ParseMode, Update, Bot
 from telegram.ext import run_async
-
 from JisooX.modules.disable import DisableAbleCommandHandler
 from JisooX import dispatcher
-
 from requests import get
 
 
@@ -57,9 +54,6 @@ __mod_name__ = "GITHUB"
 
 github_handle = DisableAbleCommandHandler("git", github)
 REPO_HANDLER = DisableAbleCommandHandler("repo", repo, pass_args=True, admin_ok=True)
-
-
-
 
 dispatcher.add_handler(github_handle)
 dispatcher.add_handler(REPO_HANDLER)
