@@ -39,7 +39,7 @@
       "REM_BG_API_KEY": {
          "description": "Enter the Remove Background Api key.",
          "required": false,
-         "value": "dxsh728mZMDmj4ijSZCNPZig"
+         "value": ""
       },
       "BOT_USERNAME": {
          "description": "Enter You bot username.",
@@ -48,7 +48,7 @@
       "BAN_STICKER": {
          "description": "ID of the sticker you want to use when banning people.",
          "required": false,
-         "value": ""
+         "value": "CAACAgUAAxkBAAJ7LmEkzya424L-Tk_20b5HtOIBXNNDAAJ3AwACcg4YVkXqxUoom5i5IAQ"
       },
       "MESSAGE_DUMP": {
          "description": "optional: a chat where your replied saved messages are stored, to stop people deleting their old",
@@ -72,7 +72,7 @@
       "KICK_STICKER": {
          "description": "ID of the sticker you want to use when kicking people.",
          "required": false,
-         "value": ""
+         "value": "CAACAgUAAxkBAAJ7LmEkzya424L-Tk_20b5HtOIBXNNDAAJ3AwACcg4YVkXqxUoom5i5IAQ"
       },
       "SQLALCHEMY_DATABASE_URI": {
          "description": "Your postgres sql db, empty this field if you dont have one.",
@@ -103,7 +103,8 @@
       },
        "LASTFM_API_KEY": {
          "description": "Required for lastfm plugin",
-         "value": "-xyz"
+         "required": false,
+         "value": ""
       },
        "START_IMG": {
          "description": "Image shows when hit /start",
@@ -111,7 +112,7 @@
       },
       "API_OPENWEATHER": {
          "description": "Required for weather information",
-         "value": "-xyz"
+         "value": "b84d0dea12baa6acf6c22f41cea472b5"
       },
       "PORT": {
          "description": "Port to use for your webhooks.",
