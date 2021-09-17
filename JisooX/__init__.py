@@ -172,7 +172,7 @@ print("[INFO]: INITIALZING AIOHTTP SESSION")
 aiohttpsession = ClientSession()
 print("[INFO]: INITIALIZING ARQ CLIENT")
 arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
-pbot = Client("jisopbot", api_id=TELETHON_ID, api_hash=TELETHON_HASH, bot_token=TOKEN)
+pbot = Client("JisooXpbot", api_id=TELETHON_ID, api_hash=TELETHON_HASH, bot_token=TOKEN)
 
 updater = tg.Updater(TOKEN, workers=WORKERS)
 dispatcher = updater.dispatcher
