@@ -16,7 +16,7 @@ from pyrogram.types import (
     Message
 )
 from pyrogram import filters
-from JisooX import pbot
+from JisooX import pbot as app
 
 TMP_DOWNLOAD_DIRECTORY = "./memek"
 
