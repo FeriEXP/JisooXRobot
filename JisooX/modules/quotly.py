@@ -1,9 +1,8 @@
-
 from io import BytesIO
 from traceback import format_exc
 from pyrogram import filters
 from pyrogram.types import Message
-from JisooX import pbot as app, arq
+from JisooX import pbot, arq
 
 
 async def quotify(messages: list):
@@ -30,7 +29,7 @@ def isArgInt(message: Message) -> bool:
         return [False, 0]
 
 
-@app.on_message(filters.command("q"))
+@pbot.on_message(filters.command("q"))
 async def quotly_func(client, message: Message):
     if not message.reply_to_message:
         return await message.reply_text(
