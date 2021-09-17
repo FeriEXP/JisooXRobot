@@ -23,7 +23,6 @@ psycopg2-binary
 feedparser
 tswift
 pynewtonmath
-#memes vvv
 spongemock
 zalgo-text
 geopy
@@ -31,11 +30,10 @@ nltk
 psutil
 bleach
 aiohttp>=2.2.5
-Python_ARQ
+python-arq
 aiofiles
 Pillow>=4.2.0
 CurrencyConverter
-#translator
 googletrans==3.1.0a0
 jikanpy
 speedtest-cli
@@ -51,7 +49,7 @@ hachoir
 validators
 youtube-search-python
 ffmpeg
-git+https://github.com/Sur-vivor/python-markdown2.git
+markdown2>=2.4.0
 apscheduler
 fontTools
 glitch_this
