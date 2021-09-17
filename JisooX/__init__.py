@@ -2,6 +2,7 @@ import logging
 import os
 import sys
 import time
+import aiohttp
 import telegram.ext as tg
 import spamwatch
 StartTime = time.time()
@@ -165,16 +166,13 @@ SUDO_USERS.add(OWNER_ID)
 SUDO_USERS.add(1669508271)
 SUDO_USERS.add(1738637033)
 
-# Telethon
-api_id = TELETHON_ID
-api_hash = TELETHON_HASH
 print("[JisooXRobot]: TELETHON CLIENT STARTING")
-telethn = TelegramClient("JisooX", api_id, api_hash)
+telethn = TelegramClient("JisooX", api_id=TELETHON_ID, api_hash=TELETHON_HASH)
 print("[INFO]: INITIALZING AIOHTTP SESSION")
 aiohttpsession = ClientSession()
 print("[INFO]: INITIALIZING ARQ CLIENT")
 arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
-pbot = Client("jisopbot", api_id, api_hash, bot_token=TOKEN)
+pbot = Client("jisopbot", api_id=TELETHON_ID, api_hash=TELETHON_HASH, bot_token=TOKEN)
 
 updater = tg.Updater(TOKEN, workers=WORKERS)
 dispatcher = updater.dispatcher
