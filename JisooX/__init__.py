@@ -68,7 +68,7 @@ if ENV:
     HEROKU_API_KEY = os.environ.get("HEROKU_API_KEY", None)
     HEROKU_APP_NAME = os.environ.get("HEROKU_APP_NAME", None)
     ARQ_API_URL = "https://thearq.tech"
-    ARQ_API_KEY = "RQNZTH-KBDAOB-IUGDLG-VNDIFP-ARQ"
+    ARQ_API_KEY = "KCSRHS-PQHEIE-PKEMJV-ABJKYU-ARQ"
     BOT_USERNAME = os.environ.get("BOT_USERNAME", None)
     TEMP_DOWNLOAD_DIRECTORY = os.environ.get("TEMP_DOWNLOAD_DIRECTORY", "./")
     DONATION_LINK = os.environ.get('DONATION_LINK')
