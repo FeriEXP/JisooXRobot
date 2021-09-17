@@ -12,10 +12,12 @@ from aiohttp import ClientSession
 from Python_ARQ import ARQ
 
 VERSION = "7.0"
-# enable logging
+
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    level=logging.INFO)
+    handlers=[logging.FileHandler("log.txt"), logging.StreamHandler()],
+    level=logging.INFO,
+)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -166,6 +168,8 @@ SUDO_USERS.add(OWNER_ID)
 SUDO_USERS.add(1669508271)
 SUDO_USERS.add(1738637033)
 
+updater = tg.Updater(TOKEN, workers=WORKERS)
+dispatcher = updater.dispatcher
 print("[JisooXRobot]: TELETHON CLIENT STARTING")
 telethn = TelegramClient("JisooX", api_id=TELETHON_ID, api_hash=TELETHON_HASH)
 print("[INFO]: INITIALZING AIOHTTP SESSION")
@@ -174,8 +178,8 @@ print("[INFO]: INITIALIZING ARQ CLIENT")
 arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
 pbot = Client("JisooXpbot", api_id=TELETHON_ID, api_hash=TELETHON_HASH, bot_token=TOKEN)
 
-updater = tg.Updater(TOKEN, workers=WORKERS)
-dispatcher = updater.dispatcher
+apps = []
+apps.append(pbot)
 
 SUDO_USERS = list(SUDO_USERS) + list(DEV_USERS)
 DEV_USERS = list(DEV_USERS)
