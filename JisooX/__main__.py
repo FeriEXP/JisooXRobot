@@ -551,6 +551,17 @@ def memory(percentage=0.5):
 
 @memory(percentage=0.8)
 def main():
+
+    if SUPPORT_CHAT is not None and isinstance(SUPPORT_CHAT, str):
+        try:
+            dispatcher.bot.sendMessage(f"@{SUPPORT_CHAT}", "Yes, I'm online now!")
+        except Unauthorized:
+            LOGGER.warning(
+                "Bot isnt able to send message to support_chat, go and check!"
+            )
+        except BadRequest as e:
+            LOGGER.warning(e.message)
+          
     test_handler = CommandHandler("test", test)
     start_handler = CommandHandler("start", start, pass_args=True)
     
@@ -589,31 +600,28 @@ def main():
     # dispatcher.add_error_handler(error_callback)
 
     if WEBHOOK:
-        LOGGER.info("Using webhooks.")
-        updater.start_webhook(listen="127.0.0.1",
-                              port=PORT,
-                              url_path=TOKEN)
+        LOGGER.info("JisooXRobot started, Using webhook.")
+        updater.start_webhook(listen="127.0.0.1", port=PORT, url_path=TOKEN)
 
         if CERT_PATH:
-            updater.bot.set_webhook(url=URL + TOKEN,
-                                    certificate=open(CERT_PATH, 'rb'))
+            updater.bot.set_webhook(url=URL + TOKEN, certificate=open(CERT_PATH, "rb"))
         else:
             updater.bot.set_webhook(url=URL + TOKEN)
 
     else:
-        LOGGER.info("JisooXRobot running...")
-        updater.start_polling(timeout=15, read_latency=4)
-        
+        LOGGER.info("JisooXRobot started, Using long polling.")
+        updater.start_polling(timeout=15, read_latency=4, clean=True)
+
     if len(argv) not in (1, 3, 4):
         telethn.disconnect()
     else:
         telethn.run_until_disconnected()
-      
-      
+
     updater.idle()
 
-    
-if __name__ == '__main__':
-    LOGGER.info("Successfully loaded modules: " + str(ALL_MODULES))
+
+if __name__ == "__main__":
+    LOGGER.info("JisooXRobot successfully loaded modules: " + str(ALL_MODULES))
     telethn.start(bot_token=TOKEN)
+    pbot.start()
     main()
