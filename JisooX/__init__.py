@@ -113,6 +113,7 @@ if ENV:
     LASTFM_API_KEY = os.environ.get('LASTFM_API_KEY',None)
     LYDIA_API = os.environ.get('LYDIA_API',None)
     API_WEATHER  = os.environ.get('API_OPENWEATHER',None)
+    SUPPORT_CHAT = os.environ.get("SUPPORT_CHAT", None)    
     SW_API = os.environ.get('SW_API', None)
     TELETHON_ID = int(os.environ.get("APP_ID", None))
     TELETHON_HASH = os.environ.get("APP_HASH", None)
@@ -180,6 +181,7 @@ else:
     LYDIA_API = Config.LYDIA_API
     API_OPENWEATHER = Config.API_OPENWEATHER
     SW_API = Config.SW_API
+    SUPPORT_CHAT = Config.SUPPORT_CHAT   
     TELETHON_HASH = Config.TELETHON_HASH
     TELETHON_ID = Config.TELETHON_ID
     
