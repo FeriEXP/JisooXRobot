@@ -32,7 +32,6 @@ from JisooX import (
     OWNER_NAME,
     ALLOW_EXCL,
     telethn,
-    pbot,
 )
 from JisooX.modules import ALL_MODULES
 from JisooX.modules.helper_funcs.chat_status import is_user_admin
@@ -631,5 +630,4 @@ def main():
 if __name__ == '__main__':
     LOGGER.info("Successfully loaded modules: " + str(ALL_MODULES))
     telethn.start(bot_token=TOKEN)
-    pbot.start()
     main()
