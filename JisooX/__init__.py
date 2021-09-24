@@ -5,7 +5,6 @@ import time
 import aiohttp
 import telegram.ext as tg
 import spamwatch
-
 from pyrogram import Client, errors
 from telethon import TelegramClient
 from aiohttp import ClientSession
@@ -181,7 +180,6 @@ else:
     LYDIA_API = Config.LYDIA_API
     API_OPENWEATHER = Config.API_OPENWEATHER
     SW_API = Config.SW_API
-    SUPPORT_CHAT = Config.SUPPORT_CHAT   
     TELETHON_HASH = Config.TELETHON_HASH
     TELETHON_ID = Config.TELETHON_ID
     
@@ -209,7 +207,6 @@ apps.append(pbot)
 SUDO_USERS = list(SUDO_USERS) + list(DEV_USERS)
 DEV_USERS = list(DEV_USERS)
 WHITELIST_USERS = list(WHITELIST_USERS)
-SUPPORT_USERS = list(SUPPORT_USERS)
 SPAMMERS = list(SPAMMERS)
 
 # SpamWatch
