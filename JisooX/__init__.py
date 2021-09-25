@@ -1,40 +1,24 @@
 import logging
 import os
 import sys
+import json
+import asyncio
 import time
-import aiohttp
-import telegram.ext as tg
 import spamwatch
-from pyrogram import Client, errors
-from telethon import TelegramClient
+import telegram.ext as tg
+from redis import StrictRedis
 from aiohttp import ClientSession
 from Python_ARQ import ARQ
+from telethon import TelegramClient
+from telethon.sessions import MemorySession
+from pyrogram import Client, errors
+from pyrogram.errors.exceptions.bad_request_400 import PeerIdInvalid, ChannelInvalid
+from pyrogram.types import Chat, User
+
 
 StartTime = time.time()
 
-
-def get_user_list(__init__, key):
-    with open("{}/JisooX/{}".format(os.getcwd(), __init__), "r") as json_file:
-        return json.load(json_file)[key]
-
-
 # enable logging
-FORMAT = "[JisooXRobot] %(message)s"
-logging.basicConfig(
-    handlers=[logging.FileHandler("log.txt"), logging.StreamHandler()],
-    level=logging.INFO,
-    format=FORMAT,
-    datefmt="[%X]",
-)
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
-
-LOGGER = logging.getLogger(__name__)
-LOGGER.info("Jisoo is starting. | An Feri Project. | Licensed under GPLv3.")
-LOGGER.info("Not affiliated to Shie Hashaikai or Villain in any way whatsoever.")
-LOGGER.info("Project maintained by: github.com/FeriEXP (t.me/Xflicks)")
-
-VERSION = "7.0"
-
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     handlers=[logging.FileHandler("log.txt"), logging.StreamHandler()],
@@ -45,191 +29,251 @@ LOGGER = logging.getLogger(__name__)
 
 # if version < 3.6, stop bot.
 if sys.version_info[0] < 3 or sys.version_info[1] < 6:
-    LOGGER.error("You MUST have a python version of at least 3.6! Multiple features depend on this. Bot quitting.")
-    sys.exit(1)
+    LOGGER.error(
+        "You MUST have a python version of at least 3.6! Multiple features depend on this. Bot quitting."
+    )
+    quit(1)
 
-ENV = bool(os.environ.get('ENV', False))
+ENV = bool(os.environ.get("ENV", False))
 
 if ENV:
-    TOKEN = os.environ.get('TOKEN', None)
+    TOKEN = os.environ.get("TOKEN", None)
 
     try:
-        OWNER_ID = int(os.environ.get('OWNER_ID', None))
+        OWNER_ID = int(os.environ.get("OWNER_ID", None))
     except ValueError:
         raise Exception("Your OWNER_ID env variable is not a valid integer.")
 
-    MESSAGE_DUMP = os.environ.get('MESSAGE_DUMP', None)
-    OWNER_NAME = os.environ.get("OWNER_NAME", None)
+    JOIN_LOGGER = os.environ.get("JOIN_LOGGER", None)
+    OWNER_USERNAME = os.environ.get("OWNER_USERNAME", None)
 
     try:
-        SUDO_USERS = {int(x) for x in os.environ.get("SUDO_USERS", "").split()}
+        DRAGONS = {int(x) for x in os.environ.get("DRAGONS", "").split()}
         DEV_USERS = {int(x) for x in os.environ.get("DEV_USERS", "").split()}
     except ValueError:
         raise Exception("Your sudo or dev users list does not contain valid integers.")
 
     try:
-        SUPPORT_USERS = {int(x) for x in os.environ.get("SUPPORT_USERS", "").split()}
+        DEMONS = {int(x) for x in os.environ.get("DEMONS", "").split()}
     except ValueError:
         raise Exception("Your support users list does not contain valid integers.")
 
     try:
-        SPAMMERS = {int(x) for x in os.environ.get("SPAMMERS", "").split()}
-    except ValueError:
-        raise Exception("Your spammers users list does not contain valid integers.")
-
-    try:
-        WHITELIST_USERS = {int(x) for x in os.environ.get("WHITELIST_USERS", "").split()}
+        WOLVES = {int(x) for x in os.environ.get("WOLVES", "").split()}
     except ValueError:
         raise Exception("Your whitelisted users list does not contain valid integers.")
 
+    try:
+        TIGERS = {int(x) for x in os.environ.get("TIGERS", "").split()}
+    except ValueError:
+        raise Exception("Your tiger users list does not contain valid integers.")
 
-    GBAN_LOGS = os.environ.get('GBAN_LOGS', None)
-    WEBHOOK = bool(os.environ.get('WEBHOOK', False))
-    URL = os.environ.get('URL', "")  # Does not contain token
-    PORT = int(os.environ.get('PORT', 5000))
+    INFOPIC = bool(os.environ.get("INFOPIC", False))
+    EVENT_LOGS = os.environ.get("EVENT_LOGS", None)
+    WEBHOOK = bool(os.environ.get("WEBHOOK", False))
+    URL = os.environ.get("URL", "")  # Does not contain token
+    PORT = int(os.environ.get("PORT", 5000))
     CERT_PATH = os.environ.get("CERT_PATH")
-
-    DB_URI = os.environ.get('DATABASE_URL')
+    API_ID = os.environ.get("API_ID", None)
+    API_HASH = os.environ.get("API_HASH", None)
+    DB_URI = os.environ.get("DATABASE_URL")
+    MONGO_DB_URI = os.environ.get("MONGO_DB_URI", None)
+    REDIS_URL = os.environ.get("REDIS_URL", None)
+    ARQ_API = os.environ.get("ARQ_API", None)
+    DONATION_LINK = os.environ.get("DONATION_LINK")
+    LOAD = os.environ.get("LOAD", "").split()
     HEROKU_API_KEY = os.environ.get("HEROKU_API_KEY", None)
     HEROKU_APP_NAME = os.environ.get("HEROKU_APP_NAME", None)
-    ARQ_API_URL = "https://thearq.tech"
-    ARQ_API_KEY = "KCSRHS-PQHEIE-PKEMJV-ABJKYU-ARQ"
-    BOT_USERNAME = os.environ.get("BOT_USERNAME", None)
     TEMP_DOWNLOAD_DIRECTORY = os.environ.get("TEMP_DOWNLOAD_DIRECTORY", "./")
-    DONATION_LINK = os.environ.get('DONATION_LINK')
-    LOAD = os.environ.get("LOAD", "").split()
+    OPENWEATHERMAP_ID = os.environ.get("OPENWEATHERMAP_ID", None)
+    VIRUS_API_KEY = os.environ.get("VIRUS_API_KEY", None)
     NO_LOAD = os.environ.get("NO_LOAD", "translation").split()
-    DEL_CMDS = bool(os.environ.get('DEL_CMDS', False))
-    STRICT_GBAN = bool(os.environ.get('STRICT_GBAN', False))  
-    STRICT_GMUTE = bool(os.environ.get('STRICT_GMUTE', False))
-    WORKERS = int(os.environ.get('WORKERS', 8))
-    BAN_STICKER = os.environ.get('BAN_STICKER', 'CAADAgADOwADPPEcAXkko5EB3YGYAg')
-    KICK_STICKER = os.environ.get('KICK_STICKER', 'CAACAgQAAxkBAAEEUYRelpQPawgDzWA0kbOucFeqf8xdAQACigAD_OoIAAF1UohdVTwBsRgE')
-    ALLOW_EXCL = os.environ.get('ALLOW_EXCL', False)
-    CASH_API_KEY = os.environ.get('CASH_API_KEY', None)
-    TIME_API_KEY = os.environ.get('TIME_API_KEY', None)
-    WALL_API = os.environ.get('WALL_API',None)
-    LASTFM_API_KEY = os.environ.get('LASTFM_API_KEY',None)
-    LYDIA_API = os.environ.get('LYDIA_API',None)
-    API_WEATHER  = os.environ.get('API_OPENWEATHER',None)
-    SUPPORT_CHAT = os.environ.get("SUPPORT_CHAT", None)    
-    SW_API = os.environ.get('SW_API', None)
-    TELETHON_ID = int(os.environ.get("APP_ID", None))
-    TELETHON_HASH = os.environ.get("APP_HASH", None)
-    
+    DEL_CMDS = bool(os.environ.get("DEL_CMDS", False))
+    STRICT_GBAN = bool(os.environ.get("STRICT_GBAN", False))
+    WORKERS = int(os.environ.get("WORKERS", 8))
+    BAN_STICKER = os.environ.get("BAN_STICKER", "CAADAgADOwADPPEcAXkko5EB3YGYAg")
+    ALLOW_EXCL = os.environ.get("ALLOW_EXCL", False)
+    CASH_API_KEY = os.environ.get("CASH_API_KEY", None)
+    TIME_API_KEY = os.environ.get("TIME_API_KEY", None)
+    WALL_API = os.environ.get("WALL_API", None)
+    SUPPORT_CHAT = os.environ.get("SUPPORT_CHAT", None)
+    SPAMWATCH_SUPPORT_CHAT = os.environ.get("SPAMWATCH_SUPPORT_CHAT", None)
+    SPAMWATCH_API = os.environ.get("SPAMWATCH_API", None)
+    LASTFM_API_KEY = os.environ.get("LASTFM_API_KEY", None)
+    CF_API_KEY = os.environ.get("CF_API_KEY", None)
+    BOT_ID = int(os.environ.get("BOT_ID", None))
+    ARQ_API_URL = "https://thearq.tech"
+    ARQ_API_KEY = ARQ_API
+
+    ALLOW_CHATS = os.environ.get("ALLOW_CHATS", True)
+
+    try:
+        BL_CHATS = set(int(x) for x in os.environ.get("BL_CHATS", "").split())
+    except ValueError:
+        raise Exception("Your blacklisted chats list does not contain valid integers.")
+
 else:
     from JisooX.config import Development as Config
-    TOKEN = Config.API_KEY
+
+    TOKEN = Config.TOKEN
 
     try:
         OWNER_ID = int(Config.OWNER_ID)
     except ValueError:
         raise Exception("Your OWNER_ID variable is not a valid integer.")
 
-    MESSAGE_DUMP = Config.MESSAGE_DUMP
+    JOIN_LOGGER = Config.JOIN_LOGGER
     OWNER_USERNAME = Config.OWNER_USERNAME
-
+    ALLOW_CHATS = Config.ALLOW_CHATS
     try:
-        SUDO_USERS = set(int(x) for x in Config.SUDO_USERS or []}
-        DEV_USERS = set(int(x) for x in Config.DEV_USERS or []}
+        DRAGONS = {int(x) for x in Config.DRAGONS or []}
+        DEV_USERS = {int(x) for x in Config.DEV_USERS or []}
     except ValueError:
         raise Exception("Your sudo or dev users list does not contain valid integers.")
 
     try:
-        SUPPORT_USERS = set(int(x) for x in Config.SUPPORT_USERS or []}
+        DEMONS = {int(x) for x in Config.DEMONS or []}
     except ValueError:
         raise Exception("Your support users list does not contain valid integers.")
 
     try:
-        SPAMMERS = set(int(x) for x in Config.SPAMMERS or []}
-    except ValueError:
-        raise Exception("Your spammers users list does not contain valid integers.")
-
-    try:
-        WHITELIST_USERS = set(int(x) for x in Config.WHITELIST_USERS or []}
+        WOLVES = {int(x) for x in Config.WOLVES or []}
     except ValueError:
         raise Exception("Your whitelisted users list does not contain valid integers.")
 
-    GBAN_LOGS = Config.GBAN_LOGS
+    try:
+        TIGERS = {int(x) for x in Config.TIGERS or []}
+    except ValueError:
+        raise Exception("Your tiger users list does not contain valid integers.")
+
+    EVENT_LOGS = Config.EVENT_LOGS
     WEBHOOK = Config.WEBHOOK
     URL = Config.URL
     PORT = Config.PORT
     CERT_PATH = Config.CERT_PATH
+    API_ID = Config.API_ID
+    API_HASH = Config.API_HASH
+
     DB_URI = Config.SQLALCHEMY_DATABASE_URI
-    HEROKU_API_KEY = Config.HEROKU_API_KEY
-    HEROKU_APP_NAME = Config.HEROKU_APP_NAME
+    REDIS_URL = Config.REDIS_URL
+    MONGO_DB_URI = Config.MONGO_DB_URI
     ARQ_API = Config.ARQ_API_KEY
     ARQ_API_URL = Config.ARQ_API_URL
-    BOT_USERNAME = Config.BOT_USERNAME
-    TEMP_DOWNLOAD_DIRECTORY = Config.TEMP_DOWNLOAD_DIRECTORY
     DONATION_LINK = Config.DONATION_LINK
     LOAD = Config.LOAD
+    TEMP_DOWNLOAD_DIRECTORY = Config.TEMP_DOWNLOAD_DIRECTORY
+    OPENWEATHERMAP_ID = Config.OPENWEATHERMAP_ID
     NO_LOAD = Config.NO_LOAD
+    HEROKU_API_KEY = Config.HEROKU_API_KEY
+    HEROKU_APP_NAME = Config.HEROKU_APP_NAME
     DEL_CMDS = Config.DEL_CMDS
     STRICT_GBAN = Config.STRICT_GBAN
-    STRICT_GMUTE = Config.STRICT_GMUTE
     WORKERS = Config.WORKERS
     BAN_STICKER = Config.BAN_STICKER
-    KICK_STICKER = Config.KICK_STICKER
     ALLOW_EXCL = Config.ALLOW_EXCL
     CASH_API_KEY = Config.CASH_API_KEY
     TIME_API_KEY = Config.TIME_API_KEY
     WALL_API = Config.WALL_API
+    SUPPORT_CHAT = Config.SUPPORT_CHAT
+    SPAMWATCH_SUPPORT_CHAT = Config.SPAMWATCH_SUPPORT_CHAT
+    SPAMWATCH_API = Config.SPAMWATCH_API
+    INFOPIC = Config.INFOPIC
     LASTFM_API_KEY = Config.LASTFM_API_KEY
-    LYDIA_API = Config.LYDIA_API
-    API_OPENWEATHER = Config.API_OPENWEATHER
-    SW_API = Config.SW_API
-    TELETHON_HASH = Config.TELETHON_HASH
-    TELETHON_ID = Config.TELETHON_ID
-    
-# Don't Remove my ID from DEV and SUDO list..It Took many months to set up a bot like this..I have added many features in this bot ..by @xflicks     
+    CF_API_KEY = Config.CF_API_KEY
+
+    try:
+        BL_CHATS = {int(x) for x in Config.BL_CHATS or []}
+    except ValueError:
+        raise Exception("Your blacklisted chats list does not contain valid integers.")
+
+DRAGONS.add(OWNER_ID)
 DEV_USERS.add(OWNER_ID)
-DEV_USERS.add(1669508271)
-DEV_USERS.add(1738637033)
-SUDO_USERS.add(OWNER_ID)
-SUDO_USERS.add(1669508271)
-SUDO_USERS.add(1738637033)
 
-updater = tg.Updater(TOKEN, workers=WORKERS)
+REDIS = StrictRedis.from_url(REDIS_URL, decode_responses=True)
+
+try:
+    REDIS.ping()
+    LOGGER.info("Your redis server is now alive!")
+except BaseException:
+    raise Exception("Your redis server is not alive, please check again.")
+finally:
+    REDIS.ping()
+    LOGGER.info("Your redis server is now alive!")
+if not SPAMWATCH_API:
+    sw = None
+    LOGGER.warning("SpamWatch API key missing! recheck your config")
+else:
+    try:
+        sw = spamwatch.Client(SPAMWATCH_API)
+    except:
+        sw = None
+        LOGGER.warning("Can't connect to SpamWatch!")
+
+from JisooX.modules.sql import SESSION
+
+defaults = tg.Defaults(run_async=True)
+updater = tg.Updater(TOKEN, workers=WORKERS, use_context=True)
+telethn = TelegramClient(MemorySession(), API_ID, API_HASH)
 dispatcher = updater.dispatcher
-print("[JisooXRobot]: TELETHON CLIENT STARTING")
-telethn = TelegramClient("JisooX", api_id=TELETHON_ID, api_hash=TELETHON_HASH)
-print("[JisooXRobot]: INITIALZING AIOHTTP SESSION")
+print("[INFO]: INITIALIZING AIOHTTP SESSION")
 aiohttpsession = ClientSession()
-print("[JisooXRobot]: INITIALIZING ARQ CLIENT")
+# ARQ Client
+print("[INFO]: INITIALIZING ARQ CLIENT")
 arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
-pbot = Client("JisooX", api_id=TELETHON_ID, api_hash=TELETHON_HASH, bot_token=TOKEN)
 
+
+pbot = Client(
+    ":memory:",
+    api_id=API_ID,
+    api_hash=API_HASH,
+    bot_token=TOKEN,
+    workers=min(32, os.cpu_count() + 4),
+)
 apps = []
 apps.append(pbot)
 
-SUDO_USERS = list(SUDO_USERS) + list(DEV_USERS)
-DEV_USERS = list(DEV_USERS)
-WHITELIST_USERS = list(WHITELIST_USERS)
-SPAMMERS = list(SPAMMERS)
 
-# SpamWatch
-if SW_API == "None":
-    spam_watch = None
-    LOGGER.warning("SpamWatch API key is missing! Check your config var")
-else:
-    try:
-        spam_watch = spamwatch.Client(SW_API)
-    except Exception:
-        spam_watch = None
-        
+async def get_entity(client, entity):
+    entity_client = client
+    if not isinstance(entity, Chat):
+        try:
+            entity = int(entity)
+        except ValueError:
+            pass
+        except TypeError:
+            entity = entity.id
+        try:
+            entity = await client.get_chat(entity)
+        except (PeerIdInvalid, ChannelInvalid):
+            for kp in apps:
+                if kp != client:
+                    try:
+                        entity = await kp.get_chat(entity)
+                    except (PeerIdInvalid, ChannelInvalid):
+                        pass
+                    else:
+                        entity_client = kp
+                        break
+            else:
+                entity = await kp.get_chat(entity)
+                entity_client = kp
+    return entity, entity_client
+
+
+DRAGONS = list(DRAGONS) + list(DEV_USERS)
+DEV_USERS = list(DEV_USERS)
+WOLVES = list(WOLVES)
+DEMONS = list(DEMONS)
+TIGERS = list(TIGERS)
+
 # Load at end to ensure all prev variables have been set
-from JisooX.modules.helper_funcs.handlers import CustomCommandHandler, CustomRegexHandler, CustomMessageHandler
+from JisooX.modules.helper_funcs.handlers import (
+    CustomCommandHandler,
+    CustomMessageHandler,
+    CustomRegexHandler,
+)
 
 # make sure the regex handler can take extra kwargs
 tg.RegexHandler = CustomRegexHandler
 tg.CommandHandler = CustomCommandHandler
 tg.MessageHandler = CustomMessageHandler
-
-def spamfilters(text, user_id, chat_id):
-    #print("{} | {} | {}".format(text, user_id, chat_id))
-    if int(user_id) in SPAMMERS:
-        print("This user is a spammer!")
-        return True
-    else:
-        return False
