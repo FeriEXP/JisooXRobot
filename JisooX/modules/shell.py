@@ -1,45 +1,49 @@
-from JisooX import dispatcher, LOGGER
-from telegram import Bot, Update
-from telegram.ext.dispatcher import run_async
-from JisooX.modules.helper_funcs.misc import sendMessage
-from telegram.ext import CommandHandler
+import subprocess
+from JisooX import LOGGER, dispatcher
 from JisooX.modules.helper_funcs.chat_status import dev_plus
-from subprocess import Popen, PIPE
+from telegram import ParseMode, Update
+from telegram.ext import CallbackContext, CommandHandler
+from telegram.ext.dispatcher import run_async
 
-
-
-def shell(command):
-    process = Popen(command,stdout=PIPE,shell=True,stderr=PIPE)
-    stdout,stderr = process.communicate()
-    return (stdout,stderr)
 
 @dev_plus
 @run_async
-def shellExecute(bot: Bot, update: Update):
-    cmd = update.message.text.split(' ',maxsplit=1)
+def shell(update: Update, context: CallbackContext):
+    message = update.effective_message
+    cmd = message.text.split(" ", 1)
     if len(cmd) == 1:
-        sendMessage("No command provided!", bot, update)
+        message.reply_text("No command to execute was given.")
         return
-    LOGGER.info(cmd)
-    output = shell(cmd[1])
-    if output[1].decode():
-        LOGGER.error(f"Shell: {output[1].decode()}")
-    if len(output[0].decode()) > 4000:
-        with open("shell.txt",'w') as f:
-            f.write(f"Output\n-----------\n{output[0].decode()}\n")
-            if output[1]:
-                f.write(f"STDError\n-----------\n{output[1].decode()}\n")
-        with open("shell.txt",'rb') as f:
-            bot.send_document(document=f, filename=f.name,
-                                  reply_to_message_id=update.message.message_id,
-                                  chat_id=update.message.chat_id)  
+    cmd = cmd[1]
+    process = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
+    )
+    stdout, stderr = process.communicate()
+    reply = ""
+    stderr = stderr.decode()
+    stdout = stdout.decode()
+    if stdout:
+        reply += f"*Stdout*\n`{stdout}`\n"
+        LOGGER.info(f"Shell - {cmd} - {stdout}")
+    if stderr:
+        reply += f"*Stderr*\n`{stderr}`\n"
+        LOGGER.error(f"Shell - {cmd} - {stderr}")
+    if len(reply) > 3000:
+        with open("shell_output.txt", "w") as file:
+            file.write(reply)
+        with open("shell_output.txt", "rb") as doc:
+            context.bot.send_document(
+                document=doc,
+                filename=doc.name,
+                reply_to_message_id=message.message_id,
+                chat_id=message.chat_id,
+            )
     else:
-        if output[1].decode():
-            sendMessage(f"<code>{output[1].decode()}</code>", bot, update)
-            return
-        else:
-            sendMessage(f"<code>{output[0].decode()}</code>", bot, update)
-                                                                                                    
+        message.reply_text(reply, parse_mode=ParseMode.MARKDOWN)
 
-shell_handler = CommandHandler(('sh','shell'), shellExecute)
-dispatcher.add_handler(shell_handler)
+
+SHELL_HANDLER = CommandHandler(["sh"], shell)
+dispatcher.add_handler(SHELL_HANDLER)
+__mod_name__ = "Shell"
+__command_list__ = ["sh"]
+__handlers__ = [SHELL_HANDLER]
