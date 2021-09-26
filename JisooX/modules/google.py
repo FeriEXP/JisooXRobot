@@ -9,6 +9,7 @@ import aiohttp
 import urllib.request
 from urllib.parse import urlencode
 import requests
+from bs4 import BeautifulSoup
 from PIL import Image
 from search_engine_parser import GoogleSearch
 
@@ -33,7 +34,7 @@ opener.addheaders = [("User-agent", useragent)]
 async def _(event):
     if event.fwd_from:
         return
-    
+
     webevent = await event.reply("searching........")
     match = event.pattern_match.group(1)
     page = re.findall(r"page=\d+", match)
@@ -59,11 +60,12 @@ async def _(event):
         "**Search Query:**\n`" + match + "`\n\n**Results:**\n" + msg, link_preview=False
     )
 
+
 @register(pattern="^/img (.*)")
 async def img_sampler(event):
     if event.fwd_from:
         return
-    
+
     query = event.pattern_match.group(1)
     jit = f'"{query}"'
     downloader.download(
@@ -91,10 +93,10 @@ opener.addheaders = [("User-agent", useragent)]
 
 @register(pattern=r"^/reverse(?: |$)(\d*)")
 async def okgoogle(img):
-    """ For .reverse command, Google search images and stickers. """
+    """For .reverse command, Google search images and stickers."""
     if os.path.isfile("okgoogle.png"):
         os.remove("okgoogle.png")
-    
+
     message = await img.get_reply_message()
     if message and message.media:
         photo = io.BytesIO()
@@ -207,7 +209,7 @@ async def scam(results, lim):
 
 @register(pattern="^/app (.*)")
 async def apk(e):
-    
+
     try:
         app_name = e.pattern_match.group(1)
         remove_space = app_name.split(" ")
@@ -266,7 +268,7 @@ async def apk(e):
             + app_link
             + "'>View in Play Store</a>"
         )
-        app_details += "\n\n===> @JisooSupport <==="
+        app_details += "\n\n===> JisooX <==="
         await e.reply(app_details, link_preview=True, parse_mode="HTML")
     except IndexError:
         await e.reply("No result found in search. Please enter **Valid app name**")
@@ -274,11 +276,17 @@ async def apk(e):
         await e.reply("Exception Occured:- " + str(err))
 
 
-__mod_name__ = "Search"
+__mod_name__ = "◎Search"
 
 __help__ = """
  ❍ /google <text>*:* Perform a google search
  ❍ /img <text>*:* Search Google for images and returns them\nFor greater no. of results specify lim, For eg: `/img hello lim=10`
  ❍ /app <appname>*:* Searches for an app in Play Store and returns its details.
  ❍ /reverse: Does a reverse image search of the media which it was replied to.
+ ❍ /gps <location>*:* Get gps location.
+ ❍ /github <username>*:* Get information about a GitHub user.
+ ❍ /country <country name>*:* Gathering info about given country
+ ❍ /imdb <Movie name>*:* Get full info about a movie with imdb.com
+ ❍ JisooX <query>*:* Yone answers the query
+  💡Ex: `JisooX where is indonesia?`
 """
