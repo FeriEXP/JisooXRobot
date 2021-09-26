@@ -1,19 +1,23 @@
 from typing import Optional
 
-from telegram import Message, Update, Bot, User
-from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
-from telegram.error import BadRequest
-from telegram.ext import CommandHandler, run_async, Filters
-from telegram.utils.helpers import escape_markdown
-
 import JisooX.modules.sql.rules_sql as sql
 from JisooX import dispatcher
 from JisooX.modules.helper_funcs.chat_status import user_admin
 from JisooX.modules.helper_funcs.string_handling import markdown_parser
+from telegram import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Message,
+    ParseMode,
+    Update,
+    User,
+)
+from telegram.error import BadRequest
+from telegram.ext import CallbackContext, CommandHandler, Filters
+from telegram.utils.helpers import escape_markdown
 
 
-@run_async
-def get_rules(bot: Bot, update: Update):
+def get_rules(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
     send_rules(update, chat_id)
 
@@ -22,38 +26,72 @@ def get_rules(bot: Bot, update: Update):
 def send_rules(update, chat_id, from_pm=False):
     bot = dispatcher.bot
     user = update.effective_user  # type: Optional[User]
+    reply_msg = update.message.reply_to_message
     try:
         chat = bot.get_chat(chat_id)
     except BadRequest as excp:
         if excp.message == "Chat not found" and from_pm:
-            bot.send_message(user.id, "The rules shortcut for this chat hasn't been set properly! Ask admins to "
-                                      "fix this.")
+            bot.send_message(
+                user.id,
+                "The rules shortcut for this chat hasn't been set properly! Ask admins to "
+                "fix this.\nMaybe they forgot the hyphen in ID",
+            )
             return
-        else:
-            raise
+        raise
 
     rules = sql.get_rules(chat_id)
-    text = "The rules for *{}* are:\n\n{}".format(escape_markdown(chat.title), rules)
+    text = f"The rules for *{escape_markdown(chat.title)}* are:\n\n{rules}"
 
     if from_pm and rules:
-        bot.send_message(user.id, text, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+        bot.send_message(
+            user.id,
+            text,
+            parse_mode=ParseMode.MARKDOWN,
+            disable_web_page_preview=True,
+        )
     elif from_pm:
-        bot.send_message(user.id, "The group admins haven't set any rules for this chat yet. "
-                                  "This probably doesn't mean it's lawless though...!")
+        bot.send_message(
+            user.id,
+            "The group admins haven't set any rules for this chat yet. "
+            "This probably doesn't mean it's lawless though...!",
+        )
+    elif rules and reply_msg:
+        reply_msg.reply_text(
+            "Please click the button below to see the rules.",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="Rules",
+                            url=f"t.me/{bot.username}?start={chat_id}",
+                        ),
+                    ],
+                ],
+            ),
+        )
     elif rules:
-        update.effective_message.reply_text("Contact me in PM to get this group's rules.",
-                                            reply_markup=InlineKeyboardMarkup(
-                                                [[InlineKeyboardButton(text="Rules",
-                                                                       url="t.me/{}?start={}".format(bot.username,
-                                                                                                     chat_id))]]))
+        update.effective_message.reply_text(
+            "Please click the button below to see the rules.",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="Rules",
+                            url=f"t.me/{bot.username}?start={chat_id}",
+                        ),
+                    ],
+                ],
+            ),
+        )
     else:
-        update.effective_message.reply_text("The group admins haven't set any rules for this chat yet. "
-                                            "This probably doesn't mean it's lawless though...!")
+        update.effective_message.reply_text(
+            "The group admins haven't set any rules for this chat yet. "
+            "This probably doesn't mean it's lawless though...!",
+        )
 
 
-@run_async
 @user_admin
-def set_rules(bot: Bot, update: Update):
+def set_rules(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
     msg = update.effective_message  # type: Optional[Message]
     raw_text = msg.text
@@ -61,27 +99,30 @@ def set_rules(bot: Bot, update: Update):
     if len(args) == 2:
         txt = args[1]
         offset = len(txt) - len(raw_text)  # set correct offset relative to command
-        markdown_rules = markdown_parser(txt, entities=msg.parse_entities(), offset=offset)
+        markdown_rules = markdown_parser(
+            txt,
+            entities=msg.parse_entities(),
+            offset=offset,
+        )
 
         sql.set_rules(chat_id, markdown_rules)
         update.effective_message.reply_text("Successfully set rules for this group.")
 
 
-@run_async
 @user_admin
-def clear_rules(bot: Bot, update: Update):
+def clear_rules(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
     sql.set_rules(chat_id, "")
     update.effective_message.reply_text("Successfully cleared rules!")
 
 
 def __stats__():
-    return "{} chats have rules set.".format(sql.num_chats())
+    return f"• {sql.num_chats()} chats have rules set."
 
 
 def __import_data__(chat_id, data):
     # set chat rules
-    rules = data.get('info', {}).get('rules', "")
+    rules = data.get("info", {}).get("rules", "")
     sql.set_rules(chat_id, rules)
 
 
@@ -90,21 +131,28 @@ def __migrate__(old_chat_id, new_chat_id):
 
 
 def __chat_settings__(chat_id, user_id):
-    return "This chat has had it's rules set: `{}`".format(bool(sql.get_rules(chat_id)))
+    return f"This chat has had it's rules set: `{bool(sql.get_rules(chat_id))}`"
 
 
 __help__ = """
- - /rules: get the rules for this chat.
-*Admin only:*
- - /setrules <your rules here>: set the rules for this chat.
- - /clearrules: clear the rules for this chat.
+ • `/rules`*:* get the rules for this chat.
+
+*Admins only:*
+ • `/setrules <your rules here>`*:* set the rules for this chat.
+ • `/clearrules`*:* clear the rules for this chat.
 """
 
-__mod_name__ = "RULES"
+__mod_name__ = "Rules"
 
-GET_RULES_HANDLER = CommandHandler("rules", get_rules, filters=Filters.group)
-SET_RULES_HANDLER = CommandHandler("setrules", set_rules, filters=Filters.group)
-RESET_RULES_HANDLER = CommandHandler("clearrules", clear_rules, filters=Filters.group)
+GET_RULES_HANDLER = CommandHandler(
+    "rules", get_rules, filters=Filters.chat_type.groups, run_async=True
+)
+SET_RULES_HANDLER = CommandHandler(
+    "setrules", set_rules, filters=Filters.chat_type.groups, run_async=True
+)
+RESET_RULES_HANDLER = CommandHandler(
+    "clearrules", clear_rules, filters=Filters.chat_type.groups, run_async=True
+)
 
 dispatcher.add_handler(GET_RULES_HANDLER)
 dispatcher.add_handler(SET_RULES_HANDLER)
