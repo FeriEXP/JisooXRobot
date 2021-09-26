@@ -21,7 +21,7 @@ def __list_all_modules():
                 any(mod == module_name for module_name in all_modules)
                 for mod in to_load
             ):
-                LOGGER.error("[JisooXRobot] Invalid loadorder names. Quitting.")
+                LOGGER.error("[JisooX] Invalid loadorder names. Quitting.")
                 sys.exit(1)
 
             all_modules = sorted(set(all_modules) - set(to_load))
@@ -31,7 +31,7 @@ def __list_all_modules():
             to_load = all_modules
 
         if NO_LOAD:
-            LOGGER.info("[JisooXRobot] Not loading: {}".format(NO_LOAD))
+            LOGGER.info("[JisooX] Not loading: {}".format(NO_LOAD))
             return [item for item in to_load if item not in NO_LOAD]
 
         return to_load
@@ -40,5 +40,5 @@ def __list_all_modules():
 
 
 ALL_MODULES = __list_all_modules()
-LOGGER.info("[JisooXRobot] Modules to load: %s", str(ALL_MODULES))
+LOGGER.info("[JisooX] Modules to load: %s", str(ALL_MODULES))
 __all__ = ALL_MODULES + ["ALL_MODULES"]
