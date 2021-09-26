@@ -92,24 +92,7 @@ buttons = [
     ],
     [
         InlineKeyboardButton(
-            text="🤴 OWNER", url="https://telegram.dog/xflicks"
-        ),
-    ],
-    [
-        InlineKeyboardButton(
-            text="📺 Star Wolrd Entertainment",
-            url="https://telegram.dog/",
-        ),
-    ],
-    [
-        InlineKeyboardButton(text="🗨️ Logis", url="https://t.me/anossupport"),
-        InlineKeyboardButton(
             text="👥 SUPPORT", url="https://telegram.dog/anossupport"
-        ),
-    ],
-    [
-        InlineKeyboardButton(
-            text="💾 Source Code", url="https://github.com/FeriEXP/JisooXRobot"
         ),
     ],
 ]
