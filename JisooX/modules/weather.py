@@ -1,89 +1,89 @@
+from JisooX import telethn as tbot
+import io
+import os
 import time
-import requests
-import json
 
-from pytz import country_names as cname
-from telegram import Message, Chat, Update, Bot, ParseMode
-from telegram.error import BadRequest
-from telegram.ext import run_async
+import aiohttp
+from telethon import *
+from telethon.tl import functions
+from telethon.tl import types
+from telethon.tl.types import *
 
-from JisooX import dispatcher, updater, API_WEATHER
-from JisooX.modules.disable import DisableAbleCommandHandler
+from JisooX import *
+
+from JisooX.events import register
 
 
-@run_async
-def weather(bot, update, args):
-    if len(args) == 0:
-        update.effective_message.reply_text("Write a location to check the weather.")
+async def is_register_admin(chat, user):
+    if isinstance(chat, (types.InputPeerChannel, types.InputChannel)):
+        return isinstance(
+            (
+                await tbot(functions.channels.GetParticipantRequest(chat, user))
+            ).participant,
+            (types.ChannelParticipantAdmin, types.ChannelParticipantCreator),
+        )
+    if isinstance(chat, types.InputPeerUser):
+        return True
+
+
+@register(pattern="^/weather (.*)")
+async def _(event):
+    if event.fwd_from:
         return
 
+    sample_url = (
+        "https://api.openweathermap.org/data/2.5/weather?q={}&APPID={}&units=metric"
+    )
+    input_str = event.pattern_match.group(1)
+    async with aiohttp.ClientSession() as session:
+        response_api_zero = await session.get(
+            sample_url.format(input_str, OPENWEATHERMAP_ID)
+        )
+    response_api = await response_api_zero.json()
+    if response_api["cod"] == 200:
+        country_code = response_api["sys"]["country"]
+        country_time_zone = int(response_api["timezone"])
+        sun_rise_time = int(response_api["sys"]["sunrise"]) + country_time_zone
+        sun_set_time = int(response_api["sys"]["sunset"]) + country_time_zone
+        await event.reply(
+            """**Location**: {}
+**Temperature**: {}°С
+    __minimium__: {}°С
+    __maximum__ : {}°С
+**Humidity**: {}%
+**Wind**: {}m/s
+**Clouds**: {}hpa
+**Sunrise**: {} {}
+**Sunset**: {} {}""".format(
+                input_str,
+                response_api["main"]["temp"],
+                response_api["main"]["temp_min"],
+                response_api["main"]["temp_max"],
+                response_api["main"]["humidity"],
+                response_api["wind"]["speed"],
+                response_api["clouds"]["all"],
+                # response_api["main"]["pressure"],
+                time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(sun_rise_time)),
+                country_code,
+                time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(sun_set_time)),
+                country_code,
+            )
+        )
+    else:
+        await event.reply(response_api["message"])
 
-    CITY = " ".join(args)
-    url = f'https://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={API_WEATHER}'
-    request = requests.get(url)
-    result = json.loads(request.text)
-    if request.status_code != 200:
-        update.effective_message.reply_text("Location not valid.")
+
+@register(pattern="^/wttr (.*)")
+async def _(event):
+    if event.fwd_from:
         return
-    
-    
-    
-    cityname = result['name']
-    curtemp = result['main']['temp']
-    feels_like = result['main']['feels_like']
-    humidity = result['main']['humidity']
-    wind = result['wind']['speed']
-    weath = result['weather'][0]
-    desc = weath['main']
-    icon = weath['id']
-    condmain = weath['main']
-    conddet = weath['description']
-    country_name = cname[f"{result['sys']['country']}"]
-    if icon <= 232: # Rain storm
-        icon = "⛈"
-    elif icon <= 321: # Drizzle
-        icon = "🌧"
-    elif icon <= 504: # Light rain
-        icon = "🌦"
-    elif icon <= 531: # Cloudy rain
-        icon = "⛈"
-    elif icon <= 622: # Snow
-        icon = "❄️"
-    elif icon <= 781: # Atmosphere
-        icon = "🌪"
-    elif icon <= 800: # Bright
-        icon = "☀️"
-    elif icon <= 801: # A little cloudy
-        icon = "⛅️"
-    elif icon <= 804: # Cloudy
-        icon = "☁️"
-    kmph = str(wind * 3.6).split(".")
-    def celsius(c):
-        k = 273.15
-        c = k if ( c > (k - 1) ) and ( c < k ) else c
-        temp = str(round((c - k)))
-        return temp
-    def fahr(c):
-        c1 = 9/5
-        c2 = 459.67
-        tF = c * c1 - c2
-        if tF<0 and tF>-1:
-            tF = 0
-        temp = str(round(tF))
-        return temp
 
-    reply = f"⛅️*Current🌦Weather*🏖\n\n🌐*Country Name:* {country_name}\n🗺*City:* {cityname}\n\n🔥*Temperature:* `{celsius(curtemp)}°C ({fahr(curtemp)}ºF), feels like {celsius(feels_like)}°C ({fahr(feels_like)}ºF) \n`⛱*Condition:* `{condmain}, {conddet}` {icon}\n⛲️*Humidity:* `{humidity}%`\n🎐*Wind:* `{kmph[0]} km/h`\n"
-    update.effective_message.reply_text("{}".format(reply),
-                parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
-    return
-
-
-__help__ = """
- - /weather <city>: gets weather info in a particular place using openweathermap.org api
-"""
-
-__mod_name__ = "WEATHER"
-
-WEATHER_HANDLER = DisableAbleCommandHandler("weather", weather, pass_args=True)
-
-dispatcher.add_handler(WEATHER_HANDLER)
+    sample_url = "https://wttr.in/{}.png"
+    # logger.info(sample_url)
+    input_str = event.pattern_match.group(1)
+    async with aiohttp.ClientSession() as session:
+        response_api_zero = await session.get(sample_url.format(input_str))
+        # logger.info(response_api_zero)
+        response_api = await response_api_zero.read()
+        with io.BytesIO(response_api) as out_file:
+            await event.reply(file=out_file)
