@@ -1,34 +1,51 @@
-import html
+import time
+import os
 import re
+import codecs
 from typing import List
-
-import requests
-from telegram import Bot, Update, MessageEntity, ParseMode
-from telegram.error import BadRequest
-from telegram.ext import CommandHandler, run_async, Filters
-from telegram.utils.helpers import mention_html
-
-from JisooX import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, DEV_USERS, WHITELIST_USERS
-from JisooX.__main__ import STATS, USER_INFO, TOKEN
+from random import randint
+from JisooX.modules.helper_funcs.chat_status import user_admin
 from JisooX.modules.disable import DisableAbleCommandHandler
-from JisooX.modules.helper_funcs.chat_status import user_admin, sudo_plus
-from JisooX.modules.helper_funcs.extraction import extract_user
+from JisooX import (
+    dispatcher,
+    WALL_API,
+)
+import requests as r
+import wikipedia
+from requests import get, post
+from telegram import (
+    Chat,
+    ChatAction,
+    Update,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    ParseMode,
+    Message,
+    MessageEntity,
+    TelegramError,
+)
+from telegram.error import BadRequest
+from telegram.ext.dispatcher import run_async
+from telegram.ext import CallbackContext, Filters, CommandHandler
+from JisooX import StartTime
+from JisooX.modules.helper_funcs.chat_status import sudo_plus
+from JisooX.modules.helper_funcs.alternate import send_action, typing_action
 
 MARKDOWN_HELP = f"""
 Markdown is a very powerful formatting tool supported by telegram. {dispatcher.bot.first_name} has some enhancements, to make sure that \
 saved messages are correctly parsed, and to allow you to create buttons.
 
-- <code>_italic_</code>: wrapping text with '_' will produce italic text
-- <code>*bold*</code>: wrapping text with '*' will produce bold text
-- <code>`code`</code>: wrapping text with '`' will produce monospaced text, also known as 'code'
-- <code>[sometext](someURL)</code>: this will create a link - the message will just show <code>sometext</code>, \
+• <code>_italic_</code>: wrapping text with '_' will produce italic text
+• <code>*bold*</code>: wrapping text with '*' will produce bold text
+• <code>`code`</code>: wrapping text with '`' will produce monospaced text, also known as 'code'
+• <code>[sometext](someURL)</code>: this will create a link - the message will just show <code>sometext</code>, \
 and tapping on it will open the page at <code>someURL</code>.
-EG: <code>[test](example.com)</code>
+<b>Example:</b><code>[test](example.com)</code>
 
-- <code>[buttontext](buttonurl:someURL)</code>: this is a special enhancement to allow users to have telegram \
+• <code>[buttontext](buttonurl:someURL)</code>: this is a special enhancement to allow users to have telegram \
 buttons in their markdown. <code>buttontext</code> will be what is displayed on the button, and <code>someurl</code> \
 will be the url which is opened.
-EG: <code>[This is a button](buttonurl:example.com)</code>
+<b>Example:</b> <code>[This is a button](buttonurl:example.com)</code>
 
 If you want multiple buttons on the same line, use :same, as such:
 <code>[one](buttonurl://example.com)
@@ -39,103 +56,238 @@ Keep in mind that your message <b>MUST</b> contain some text other than just a b
 """
 
 
-@run_async
-def get_id(bot: Bot, update: Update, args: List[str]):
-    message = update.effective_message
-    chat = update.effective_chat
-    msg = update.effective_message
-    user_id = extract_user(msg, args)
-
-    if user_id:
-
-        if msg.reply_to_message and msg.reply_to_message.forward_from:
-
-            user1 = message.reply_to_message.from_user
-            user2 = message.reply_to_message.forward_from
-
-            msg.reply_text(f"The original sender, {html.escape(user2.first_name)},"
-                           f" has an ID of <code>{user2.id}</code>.\n"
-                           f"The forwarder, {html.escape(user1.first_name)},"
-                           f" has an ID of <code>{user1.id}</code>.",
-                           parse_mode=ParseMode.HTML)
-
-        else:
-
-            user = bot.get_chat(user_id)
-            msg.reply_text(f"{html.escape(user.first_name)}'s id is <code>{user.id}</code>.",
-                           parse_mode=ParseMode.HTML)
-
-    else:
-
-        if chat.type == "private":
-            msg.reply_text(f"Your id is <code>{chat.id}</code>.",
-                           parse_mode=ParseMode.HTML)
-
-        else:
-            msg.reply_text(f"This group's id is <code>{chat.id}</code>.",
-                           parse_mode=ParseMode.HTML)
-
-
-@run_async
-def gifid(bot: Bot, update: Update):
-    msg = update.effective_message
-    if msg.reply_to_message and msg.reply_to_message.animation:
-        update.effective_message.reply_text(f"Gif ID:\n<code>{msg.reply_to_message.animation.file_id}</code>",
-                                            parse_mode=ParseMode.HTML)
-    else:
-        update.effective_message.reply_text("Please reply to a gif to get its ID.")
-
-@run_async
 @user_admin
-def echo(bot: Bot, update: Update):
+def echo(update: Update, context: CallbackContext):
     args = update.effective_message.text.split(None, 1)
     message = update.effective_message
 
     if message.reply_to_message:
-        message.reply_to_message.reply_text(args[1])
+        message.reply_to_message.reply_text(
+            args[1], parse_mode="MARKDOWN", disable_web_page_preview=True
+        )
     else:
-        message.reply_text(args[1], quote=False)
-
+        message.reply_text(
+            args[1], quote=False, parse_mode="MARKDOWN", disable_web_page_preview=True
+        )
     message.delete()
 
 
-@run_async
-def markdown_help(bot: Bot, update: Update):
+def ping(update: Update, _):
+    msg = update.effective_message
+    start_time = time.time()
+    message = msg.reply_text("Pinging...")
+    end_time = time.time()
+    ping_time = round((end_time - start_time) * 1000, 3)
+    message.edit_text(
+        "*PONG!!!*\n`{}ms`".format(ping_time), parse_mode=ParseMode.MARKDOWN
+    )
+
+
+def markdown_help_sender(update: Update):
     update.effective_message.reply_text(MARKDOWN_HELP, parse_mode=ParseMode.HTML)
-    update.effective_message.reply_text("Try forwarding the following message to me, and you'll see!")
-    update.effective_message.reply_text("/save test This is a markdown test. _italics_, *bold*, `code`, "
-                                        "[URL](example.com) [button](buttonurl:github.com) "
-                                        "[button2](buttonurl://google.com:same)")
+    update.effective_message.reply_text(
+        "Try forwarding the following message to me, and you'll see, and Use #test!"
+    )
+    update.effective_message.reply_text(
+        "/save test This is a markdown test. _italics_, *bold*, code, "
+        "[URL](example.com) [button](buttonurl:github.com) "
+        "[button2](buttonurl://google.com:same)"
+    )
 
 
-@run_async
-@sudo_plus
-def stats(bot: Bot, update: Update):
-    stats = "Current stats:\n" + "\n".join([mod.__stats__() for mod in STATS])
-    result = re.sub(r'(\d+)', r'<code>\1</code>', stats)
-    update.effective_message.reply_text(result, parse_mode=ParseMode.HTML)
+def markdown_help(update: Update, context: CallbackContext):
+    if update.effective_chat.type != "private":
+        update.effective_message.reply_text(
+            "Contact me in pm",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            "Markdown help",
+                            url=f"t.me/{context.bot.username}?start=markdownhelp",
+                        )
+                    ]
+                ]
+            ),
+        )
+        return
+    markdown_help_sender(update)
+
+
+def wiki(update: Update, context: CallbackContext):
+    kueri = re.split(pattern="wiki", string=update.effective_message.text)
+    wikipedia.set_lang("en")
+    if len(str(kueri[1])) == 0:
+        update.effective_message.reply_text("Enter keywords!")
+    else:
+        try:
+            pertama = update.effective_message.reply_text("🔄 Loading...")
+            keyboard = InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="🔧 More Info...",
+                            url=wikipedia.page(kueri).url,
+                        )
+                    ]
+                ]
+            )
+            context.bot.editMessageText(
+                chat_id=update.effective_chat.id,
+                message_id=pertama.message_id,
+                text=wikipedia.summary(kueri, sentences=10),
+                reply_markup=keyboard,
+            )
+        except wikipedia.PageError as e:
+            update.effective_message.reply_text(f"⚠ Error: {e}")
+        except BadRequest as et:
+            update.effective_message.reply_text(f"⚠ Error: {et}")
+        except wikipedia.exceptions.DisambiguationError as eet:
+            update.effective_message.reply_text(
+                f"⚠ Error\n There are too many query! Express it more!\nPossible query result:\n{eet}"
+            )
+
+
+@send_action(ChatAction.UPLOAD_PHOTO)
+def wall(update: Update, context: CallbackContext):
+    chat_id = update.effective_chat.id
+    msg = update.effective_message
+    msg_id = update.effective_message.message_id
+    args = context.args
+    query = " ".join(args)
+    if not query:
+        msg.reply_text("Please enter a query!")
+        return
+    caption = query
+    term = query.replace(" ", "%20")
+    json_rep = r.get(
+        f"https://wall.alphacoders.com/api2.0/get.php?auth={WALL_API}&method=search&term={term}"
+    ).json()
+    if not json_rep.get("success"):
+        msg.reply_text("An error occurred!")
+
+    else:
+        wallpapers = json_rep.get("wallpapers")
+        if not wallpapers:
+            msg.reply_text("No results found! Refine your search.")
+            return
+        index = randint(0, len(wallpapers) - 1)  # Choose random index
+        wallpaper = wallpapers[index]
+        wallpaper = wallpaper.get("url_image")
+        wallpaper = wallpaper.replace("\\", "")
+        context.bot.send_photo(
+            chat_id,
+            photo=wallpaper,
+            caption="Preview",
+            reply_to_message_id=msg_id,
+            timeout=60,
+        )
+        context.bot.send_document(
+            chat_id,
+            document=wallpaper,
+            filename="wallpaper",
+            caption=caption,
+            reply_to_message_id=msg_id,
+            timeout=60,
+        )
+
+
+@typing_action
+def paste(update, context):
+    msg = update.effective_message
+
+    if msg.reply_to_message and msg.reply_to_message.document:
+        file = context.bot.get_file(msg.reply_to_message.document)
+        file.download("file.txt")
+        text = codecs.open("file.txt", "r+", encoding="utf-8")
+        paste_text = text.read()
+        link = (
+            post(
+                "https://nekobin.com/api/documents",
+                json={"content": paste_text},
+            )
+            .json()
+            .get("result")
+            .get("key")
+        )
+        text = "**Pasted to Nekobin!!!**"
+        buttons = [
+            [
+                InlineKeyboardButton(
+                    text="View Link", url=f"https://nekobin.com/{link}"
+                ),
+                InlineKeyboardButton(
+                    text="View Raw",
+                    url=f"https://nekobin.com/raw/{link}",
+                ),
+            ]
+        ]
+        msg.reply_text(
+            text,
+            reply_markup=InlineKeyboardMarkup(buttons),
+            parse_mode=ParseMode.MARKDOWN,
+            disable_web_page_preview=True,
+        )
+        os.remove("file.txt")
+    else:
+        msg.reply_text("Give me a text file to paste on nekobin")
+        return
 
 
 __help__ = """
- - /id: get the current group id. If used by replying to a message, gets that user's id.
- - /info: get information about a user.
- - /gifid: Get gif ID.
- - /markdownhelp: quick summary of how markdown works in telegram - can only be called in private chats.
- - /cash : currency converter
+*Available commands:*
+*Markdown:*
+ • `/markdownhelp`*:* quick summary of how markdown works in telegram - can only be called in private chats
+ *Paste:*
+ • `/paste`*:* Saves replied content to `nekobin.com` and replies with a url
+ *React:*
+ • `/react`*:* Reacts with a random reaction 
+ *Urban Dictonary:*
+ • `/ud <word>`*:* Type the word or expression you want to search use
+ *Last FM:*
+ • `/setuser <username>`*:* sets your last.fm username.
+ • `/clearuser`*:* removes your last.fm username from the bot's database.
+ • `/lastfm`*:* returns what you're scrobbling on last.fm
+ *Reverse:*
+ • `/reverse`*:* Does a reverse image search of the media which it was replied to.
+ *Wikipedia:*
+ • `/wiki <query>`*:* wikipedia your query
+ *Wallpapers:*
+ • `/wall <query>`*:* get a wallpaper from wall.alphacoders.com
+ *Currency converter:* 
+ • `/cash`*:* currency converter
+ Example:
+ `/cash 1 USD INR`  
+      _OR_
+ `/cash 1 usd inr`
+ Output: `1.0 USD = 75.505 INR`
 """
 
-ID_HANDLER = DisableAbleCommandHandler("id", get_id, pass_args=True)
-GIFID_HANDLER = DisableAbleCommandHandler("gifid", gifid)
-ECHO_HANDLER = DisableAbleCommandHandler("echo", echo, filters=Filters.group)
-MD_HELP_HANDLER = CommandHandler("markdownhelp", markdown_help, filters=Filters.private)
-STATS_HANDLER = CommandHandler("stats", stats)
+ECHO_HANDLER = DisableAbleCommandHandler(
+    "echo", echo, filters=Filters.chat_type.groups, run_async=True
+)
+MD_HELP_HANDLER = CommandHandler("markdownhelp", markdown_help, run_async=True)
+PING_HANDLER = DisableAbleCommandHandler("ping", ping, run_async=True)
+PASTE_HANDLER = DisableAbleCommandHandler(
+    "paste", paste, pass_args=True, run_async=True
+)
+WIKI_HANDLER = DisableAbleCommandHandler("wiki", wiki)
+WALLPAPER_HANDLER = DisableAbleCommandHandler("wall", wall, run_async=True)
 
-dispatcher.add_handler(ID_HANDLER)
-dispatcher.add_handler(GIFID_HANDLER)
 dispatcher.add_handler(ECHO_HANDLER)
 dispatcher.add_handler(MD_HELP_HANDLER)
-dispatcher.add_handler(STATS_HANDLER)
+dispatcher.add_handler(PING_HANDLER)
+dispatcher.add_handler(WIKI_HANDLER)
+dispatcher.add_handler(WALLPAPER_HANDLER)
+dispatcher.add_handler(PASTE_HANDLER)
 
-__mod_name__ = "MISC"
-__command_list__ = ["id", "echo"]
-__handlers__ = [ID_HANDLER, ECHO_HANDLER, MD_HELP_HANDLER, STATS_HANDLER]
+__mod_name__ = "Extra"
+__command_list__ = ["id", "echo", "ping", "paste", "wiki", "wall"]
+__handlers__ = [
+    ECHO_HANDLER,
+    MD_HELP_HANDLER,
+    PING_HANDLER,
+    PASTE_HANDLER,
+    WIKI_HANDLER,
+    WALLPAPER_HANDLER,
+]
