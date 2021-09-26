@@ -1,49 +1,25 @@
-import logging
-import sys
-
-from contextlib import contextmanager, redirect_stdout
-
-from telegram import Bot, Update, ParseMode
-from telegram.ext import Updater, CommandHandler, run_async
-
-from telegram.error import TimedOut, NetworkError
-
-from JisooX import dispatcher, LOGGER
-from JisooX.modules.disable import DisableAbleCommandHandler
-from JisooX.modules.helper_funcs.chat_status import bot_admin, can_promote, user_admin, can_pin, dev_plus
-
-from requests import get
-import inspect
-import os
-import shutil
-import glob
-import math
-import textwrap
-import requests
-import json
-import gc
-import datetime
-import time
-import traceback
-import re
 import io
-import asyncio
-import random
-import subprocess
-import urllib
-import psutil
+import os
+import textwrap
+import traceback
+from contextlib import redirect_stdout
+from JisooX import LOGGER, dispatcher
+from JisooX.modules.helper_funcs.chat_status import dev_plus
+from telegram import ParseMode, Update
+from telegram.ext import CallbackContext, CommandHandler, run_async
 
 namespaces = {}
+
 
 def namespace_of(chat, update, bot):
     if chat not in namespaces:
         namespaces[chat] = {
-            '__builtins__': globals()['__builtins__'],
-            'bot': bot,
-            'effective_message': update.effective_message,
-            'effective_user': update.effective_user,
-            'effective_chat': update.effective_chat,
-            'update': update
+            "__builtins__": globals()["__builtins__"],
+            "bot": bot,
+            "effective_message": update.effective_message,
+            "effective_user": update.effective_user,
+            "effective_chat": update.effective_chat,
+            "update": update,
         }
 
     return namespaces[chat]
@@ -52,77 +28,93 @@ def namespace_of(chat, update, bot):
 def log_input(update):
     user = update.effective_user.id
     chat = update.effective_chat.id
-    LOGGER.info("IN: {} (user={}, chat={})".format(update.effective_message.text, user, chat))
+    LOGGER.info(f"IN: {update.effective_message.text} (user={user}, chat={chat})")
+
 
 def send(msg, bot, update):
-    LOGGER.info("OUT: '{}'".format(msg))
-    bot.send_message(chat_id=update.effective_chat.id, text="`{}`".format(msg), parse_mode=ParseMode.MARKDOWN)
+    if len(str(msg)) > 2000:
+        with io.BytesIO(str.encode(msg)) as out_file:
+            out_file.name = "output.txt"
+            bot.send_document(chat_id=update.effective_chat.id, document=out_file)
+    else:
+        LOGGER.info(f"OUT: '{msg}'")
+        bot.send_message(
+            chat_id=update.effective_chat.id,
+            text=f"`{msg}`",
+            parse_mode=ParseMode.MARKDOWN,
+        )
+
 
 @dev_plus
 @run_async
-def evaluate(bot, update):
+def evaluate(update: Update, context: CallbackContext):
+    bot = context.bot
     send(do(eval, bot, update), bot, update)
 
+
 @dev_plus
 @run_async
-def execute(bot, update):
+def execute(update: Update, context: CallbackContext):
+    bot = context.bot
     send(do(exec, bot, update), bot, update)
 
+
 def cleanup_code(code):
-    if code.startswith('```') and code.endswith('```'):
-        return '\n'.join(code.split('\n')[1:-1])
-    return code.strip('` \n')
+    if code.startswith("```") and code.endswith("```"):
+        return "\n".join(code.split("\n")[1:-1])
+    return code.strip("` \n")
 
 
 def do(func, bot, update):
-
     log_input(update)
-    content = update.message.text.split(' ', 1)[-1]
+    content = update.message.text.split(" ", 1)[-1]
     body = cleanup_code(content)
     env = namespace_of(update.message.chat_id, update, bot)
 
     os.chdir(os.getcwd())
-    with open('%s/JisooX/modules/helper_funcs/temp.txt' % os.getcwd(), 'w') as temp:
+    with open(
+        os.path.join(os.getcwd(), "YoneRobot/modules/helper_funcs/temp.txt"), "w"
+    ) as temp:
         temp.write(body)
 
     stdout = io.StringIO()
 
-    to_compile = 'def func():\n{}'.format(textwrap.indent(body, "  "))
+    to_compile = f'def func():\n{textwrap.indent(body, "  ")}'
 
     try:
         exec(to_compile, env)
     except Exception as e:
-        return '{}: {}'.format(e.__class__.__name__, e)
+        return f"{e.__class__.__name__}: {e}"
 
-    func = env['func']
+    func = env["func"]
 
     try:
         with redirect_stdout(stdout):
             func_return = func()
     except Exception as e:
         value = stdout.getvalue()
-        return '{}{}'.format(value, traceback.format_exc())
+        return f"{value}{traceback.format_exc()}"
     else:
         value = stdout.getvalue()
         result = None
         if func_return is None:
             if value:
-                result = '{}'.format(value)
+                result = f"{value}"
             else:
                 try:
-                    result = '{}'.format(repr(eval(body, env)))
+                    result = f"{repr(eval(body, env))}"
                 except:
                     pass
         else:
-            result = '{}{}'.format(value, func_return)
+            result = f"{value}{func_return}"
         if result:
-            if len(str(result)) > 2000:
-                result = 'Output is too long'
             return result
+
 
 @dev_plus
 @run_async
-def clear(bot, update):
+def clear(update: Update, context: CallbackContext):
+    bot = context.bot
     log_input(update)
     global namespaces
     if update.message.chat_id in namespaces:
@@ -130,12 +122,12 @@ def clear(bot, update):
     send("Cleared locals.", bot, update)
 
 
-eval_handler = CommandHandler(('e', 'ev', 'eva', 'eval'), evaluate)
-exec_handler = CommandHandler(('x', 'ex', 'exe', 'exec', 'py'), execute)
-clear_handler = CommandHandler('clearlocals', clear)
+EVAL_HANDLER = CommandHandler(("e", "ev", "eva", "eval"), evaluate, run_async=True)
+EXEC_HANDLER = CommandHandler(("x", "ex", "exe", "exec", "py"), execute, run_async=True)
+CLEAR_HANDLER = CommandHandler("clearlocals", clear, run_async=True)
 
-dispatcher.add_handler(eval_handler)
-dispatcher.add_handler(exec_handler)
-dispatcher.add_handler(clear_handler)
+dispatcher.add_handler(EVAL_HANDLER)
+dispatcher.add_handler(EXEC_HANDLER)
+dispatcher.add_handler(CLEAR_HANDLER)
 
 __mod_name__ = "Eval Module"
