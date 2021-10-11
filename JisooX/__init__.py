@@ -5,33 +5,11 @@ import time
 import aiohttp
 import telegram.ext as tg
 import spamwatch
+StartTime = time.time()
 from pyrogram import Client, errors
 from telethon import TelegramClient
 from aiohttp import ClientSession
 from Python_ARQ import ARQ
-
-StartTime = time.time()
-
-
-def get_user_list(__init__, key):
-    with open("{}/JisooX/{}".format(os.getcwd(), __init__), "r") as json_file:
-        return json.load(json_file)[key]
-
-
-# enable logging
-FORMAT = "[JisooXRobot] %(message)s"
-logging.basicConfig(
-    handlers=[logging.FileHandler("log.txt"), logging.StreamHandler()],
-    level=logging.INFO,
-    format=FORMAT,
-    datefmt="[%X]",
-)
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
-
-LOGGER = logging.getLogger(__name__)
-LOGGER.info("Jisoo is starting. | An Feri Project. | Licensed under GPLv3.")
-LOGGER.info("Not affiliated to Shie Hashaikai or Villain in any way whatsoever.")
-LOGGER.info("Project maintained by: github.com/FeriEXP (t.me/Xflicks)")
 
 VERSION = "7.0"
 
@@ -46,7 +24,7 @@ LOGGER = logging.getLogger(__name__)
 # if version < 3.6, stop bot.
 if sys.version_info[0] < 3 or sys.version_info[1] < 6:
     LOGGER.error("You MUST have a python version of at least 3.6! Multiple features depend on this. Bot quitting.")
-    sys.exit(1)
+    quit(1)
 
 ENV = bool(os.environ.get('ENV', False))
 
@@ -62,23 +40,23 @@ if ENV:
     OWNER_NAME = os.environ.get("OWNER_NAME", None)
 
     try:
-        SUDO_USERS = {int(x) for x in os.environ.get("SUDO_USERS", "").split()}
-        DEV_USERS = {int(x) for x in os.environ.get("DEV_USERS", "").split()}
+        SUDO_USERS = set(int(x) for x in os.environ.get("SUDO_USERS", "").split())
+        DEV_USERS = set(int(x) for x in os.environ.get("DEV_USERS", "").split())
     except ValueError:
         raise Exception("Your sudo or dev users list does not contain valid integers.")
 
     try:
-        SUPPORT_USERS = {int(x) for x in os.environ.get("SUPPORT_USERS", "").split()}
+        SUPPORT_USERS = set(int(x) for x in os.environ.get("SUPPORT_USERS", "").split())
     except ValueError:
         raise Exception("Your support users list does not contain valid integers.")
 
     try:
-        SPAMMERS = {int(x) for x in os.environ.get("SPAMMERS", "").split()}
+        SPAMMERS = set(int(x) for x in os.environ.get("SPAMMERS", "").split())
     except ValueError:
         raise Exception("Your spammers users list does not contain valid integers.")
 
     try:
-        WHITELIST_USERS = {int(x) for x in os.environ.get("WHITELIST_USERS", "").split()}
+        WHITELIST_USERS = set(int(x) for x in os.environ.get("WHITELIST_USERS", "").split())
     except ValueError:
         raise Exception("Your whitelisted users list does not contain valid integers.")
 
@@ -112,7 +90,6 @@ if ENV:
     LASTFM_API_KEY = os.environ.get('LASTFM_API_KEY',None)
     LYDIA_API = os.environ.get('LYDIA_API',None)
     API_WEATHER  = os.environ.get('API_OPENWEATHER',None)
-    SUPPORT_CHAT = os.environ.get("SUPPORT_CHAT", None)    
     SW_API = os.environ.get('SW_API', None)
     TELETHON_ID = int(os.environ.get("APP_ID", None))
     TELETHON_HASH = os.environ.get("APP_HASH", None)
@@ -130,23 +107,23 @@ else:
     OWNER_USERNAME = Config.OWNER_USERNAME
 
     try:
-        SUDO_USERS = set(int(x) for x in Config.SUDO_USERS or []}
-        DEV_USERS = set(int(x) for x in Config.DEV_USERS or []}
+        SUDO_USERS = set(int(x) for x in Config.SUDO_USERS or [])
+        DEV_USERS = set(int(x) for x in Config.DEV_USERS or [])
     except ValueError:
         raise Exception("Your sudo or dev users list does not contain valid integers.")
 
     try:
-        SUPPORT_USERS = set(int(x) for x in Config.SUPPORT_USERS or []}
+        SUPPORT_USERS = set(int(x) for x in Config.SUPPORT_USERS or [])
     except ValueError:
         raise Exception("Your support users list does not contain valid integers.")
 
     try:
-        SPAMMERS = set(int(x) for x in Config.SPAMMERS or []}
+        SPAMMERS = set(int(x) for x in Config.SPAMMERS or [])
     except ValueError:
         raise Exception("Your spammers users list does not contain valid integers.")
 
     try:
-        WHITELIST_USERS = set(int(x) for x in Config.WHITELIST_USERS or []}
+        WHITELIST_USERS = set(int(x) for x in Config.WHITELIST_USERS or [])
     except ValueError:
         raise Exception("Your whitelisted users list does not contain valid integers.")
 
@@ -155,6 +132,7 @@ else:
     URL = Config.URL
     PORT = Config.PORT
     CERT_PATH = Config.CERT_PATH
+
     DB_URI = Config.SQLALCHEMY_DATABASE_URI
     HEROKU_API_KEY = Config.HEROKU_API_KEY
     HEROKU_APP_NAME = Config.HEROKU_APP_NAME
@@ -194,11 +172,11 @@ updater = tg.Updater(TOKEN, workers=WORKERS)
 dispatcher = updater.dispatcher
 print("[JisooXRobot]: TELETHON CLIENT STARTING")
 telethn = TelegramClient("JisooX", api_id=TELETHON_ID, api_hash=TELETHON_HASH)
-print("[JisooXRobot]: INITIALZING AIOHTTP SESSION")
+print("[INFO]: INITIALZING AIOHTTP SESSION")
 aiohttpsession = ClientSession()
-print("[JisooXRobot]: INITIALIZING ARQ CLIENT")
+print("[INFO]: INITIALIZING ARQ CLIENT")
 arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
-pbot = Client("JisooX", api_id=TELETHON_ID, api_hash=TELETHON_HASH, bot_token=TOKEN)
+pbot = Client("JisooXpbot", api_id=TELETHON_ID, api_hash=TELETHON_HASH, bot_token=TOKEN)
 
 apps = []
 apps.append(pbot)
@@ -206,6 +184,7 @@ apps.append(pbot)
 SUDO_USERS = list(SUDO_USERS) + list(DEV_USERS)
 DEV_USERS = list(DEV_USERS)
 WHITELIST_USERS = list(WHITELIST_USERS)
+SUPPORT_USERS = list(SUPPORT_USERS)
 SPAMMERS = list(SPAMMERS)
 
 # SpamWatch
