@@ -93,6 +93,7 @@ if ENV:
     SW_API = os.environ.get('SW_API', None)
     TELETHON_ID = int(os.environ.get("APP_ID", None))
     TELETHON_HASH = os.environ.get("APP_HASH", None)
+    SUPPORT_CHAT = os.environ.get("SUPPORT_CHAT", None)
     
 else:
     from JisooX.config import Development as Config
@@ -159,6 +160,7 @@ else:
     SW_API = Config.SW_API
     TELETHON_HASH = Config.TELETHON_HASH
     TELETHON_ID = Config.TELETHON_ID
+    SUPPORT_CHAT = Config.SUPPORT_CHAT
     
 # Don't Remove my ID from DEV and SUDO list..It Took many months to set up a bot like this..I have added many features in this bot ..by @xflicks     
 DEV_USERS.add(OWNER_ID)
