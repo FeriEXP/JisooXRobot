@@ -20,7 +20,6 @@ from bs4 import BeautifulSoup
 from countryinfo import CountryInfo
 from faker import Faker
 from faker.providers import internet
-from PyDictionary import PyDictionary
 from pyrogram import errors, filters
 from pyrogram.types import (
     InlineKeyboardButton,
@@ -40,8 +39,6 @@ from JisooX.pyrogramee.pyrogram import pbot as app
 
 OPENWEATHERMAP_ID = get_str_key("API_OPENWEATHER", "")
 TIME_API_KEY = get_str_key("TIME_API_KEY", required=False)
-
-dictionary = PyDictionary()
 
 
 class AioHttp:
@@ -78,7 +75,6 @@ __help__ = """
 - yt [query] - Youtube Search.
 - tr [LANGUAGE_CODE] [QUERY]** - Translate Text.
 - modapk [name] - Give you direct link of mod apk.
-- ud [QUERY] - Urban Dictionary Query
 - google [QUERY] - Google Search.
 - webss [URL] - Take Screenshot Of A Website.
 - bitly [URL] - Shorten A Link.
@@ -92,9 +88,6 @@ __help__ = """
 - spaminfo [ID] - Get spam info of the user.
 - lyrics [QUERY] - Get lyrics of the song.
 - paste [TEXT] - Paste text on pastebin.
-- define [WORD] - Get definition from Dictionary.
-- synonyms [WORD] - Get synonyms from Dictionary.
-- antonyms [WORD] - Get antonyms from Dictionary.
 - country [QUERY] - Get Information about given country.
 - cs - Gathers Cricket info (Globally).
 - covid [COUNTRY] - Get covid updates of given country.
@@ -121,7 +114,6 @@ __help__ = """
 - **alive** - __Check Bot's Stats.__
 - **yt [query]** - __Youtube Search.__
 - **tr [LANGUAGE_CODE] [QUERY]** - __Translate Text.__
-- **ud [QUERY]** - __Urban Dictionary Query.__
 - **google [QUERY]** - __Google Search.__
 - **modapk [name]** - __Give you direct link of mod apk__
 - **webss [URL]** - __Take Screenshot Of A Website.__
@@ -136,9 +128,6 @@ __help__ = """
 - **spaminfo [id]** - __Get spam info of the user.__
 - **lyrics [QUERY]** - __Get lyrics of given song.__
 - **paste [TEXT]** - __Paste text on pastebin.__
-- **define [WORD]** - __Get definition from Dictionary.__
-- **synonyms [WORD]** - __Get synonyms from Dictionary.__
-- **antonyms [WORD]** - __Get antonyms from Dictionary.__
 - **country [QUERY]** - __Get Information about given country.__
 - **cs** - __Gathers Cricket info (Globally).__
 - **covid [COUNTRY]** - __Get covid updates of given country.__
@@ -708,66 +697,7 @@ async def inline_query_handler(client, query):
             )
             await client.answer_inline_query(query.id, cache_time=0, results=results)
 
-        elif text.split()[0] == "antonyms":
-            results = []
-            lel = text.split(None, 1)[1]
-            word = f"{lel}"
-            let = dictionary.antonym(word)
-            set = str(let)
-            jet = set.replace("{", "")
-            net = jet.replace("}", "")
-            got = net.replace("'", "")
-            results.append(
-                InlineQueryResultArticle(
-                    title=f"antonyms for {lel}",
-                    description=got,
-                    input_message_content=InputTextMessageContent(
-                        got, disable_web_page_preview=False
-                    ),
-                )
-            )
-            await client.answer_inline_query(query.id, cache_time=0, results=results)
-
-        elif text.split()[0] == "synonyms":
-            results = []
-            lel = text.split(None, 1)[1]
-            word = f"{lel}"
-            let = dictionary.synonym(word)
-            set = str(let)
-            jet = set.replace("{", "")
-            net = jet.replace("}", "")
-            got = net.replace("'", "")
-            results.append(
-                InlineQueryResultArticle(
-                    title=f"antonyms for {lel}",
-                    description=got,
-                    input_message_content=InputTextMessageContent(
-                        got, disable_web_page_preview=False
-                    ),
-                )
-            )
-            await client.answer_inline_query(query.id, cache_time=0, results=results)
-
-        elif text.split()[0] == "define":
-            results = []
-            lel = text.split(None, 1)[1]
-            word = f"{lel}"
-            let = dictionary.meaning(word)
-            set = str(let)
-            jet = set.replace("{", "")
-            net = jet.replace("}", "")
-            got = net.replace("'", "")
-            results.append(
-                InlineQueryResultArticle(
-                    title=f"Definition for {lel}",
-                    description=got,
-                    input_message_content=InputTextMessageContent(
-                        got, disable_web_page_preview=False
-                    ),
-                )
-            )
-            await client.answer_inline_query(query.id, cache_time=0, results=results)
-
+    
         elif text.split()[0] == "weather":
             results = []
             sample_url = "https://api.openweathermap.org/data/2.5/weather?q={}&APPID={}&units=metric"
